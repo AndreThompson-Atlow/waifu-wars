@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { CardData, DuelState } from '../types';
-import Card from '../components/ui/Card';
 import { CARDS } from '../constants';
 import PlayerHand from './duel/PlayerHand';
 import Board from './duel/Board';
+import CardDetails from './duel/CardDetails';
 
 interface DuelViewProps {
     duelState: DuelState;
@@ -24,7 +24,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel }) => {
         discard: [fireballCard].filter(Boolean) as CardData[],
         extraDeck: [] as CardData[],
         banished: [] as CardData[],
-        units: [adventurerCard, null, null] as (CardData | null)[],
+        units: [adventurerCard, null, null] as (CardData | null) [],
     };
 
     const opponentBoard = {
@@ -32,7 +32,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel }) => {
         discard: [] as CardData[],
         extraDeck: [] as CardData[],
         banished: [armorCard].filter(Boolean) as CardData[],
-        units: [null, adventurerCard, null] as (CardData | null)[],
+        units: [null, adventurerCard, null] as (CardData | null) [],
     };
 
     const previewCard = CARDS.length > 0 ? CARDS[Math.floor(Math.random() * 3)] : null;
@@ -81,8 +81,8 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel }) => {
                 <button onClick={onEndDuel} className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Concede</button>
             </div>
             
-            <div className="absolute top-4 left-4 w-52 z-10">
-                <Card card={previewCard} />
+            <div className="absolute top-4 left-4 z-10">
+                <CardDetails card={previewCard} />
             </div>
         </div>
     );

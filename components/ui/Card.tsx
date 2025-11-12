@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CardData, Rarity, MoralAlignment, PhilosophicalAlignment, Element, EquipmentType } from '../../types';
 
@@ -45,9 +46,9 @@ const UnitCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-md ${colors.name} uppercase`}>{card.name}</h3>
+                <h3 className={`font-bold text-sm ${colors.name} uppercase`}>{card.name}</h3>
                 {alignmentText && (
-                    <p className="text-xs font-semibold text-slate-300 tracking-wider">{alignmentText}</p>
+                    <p className="text-[8px] font-semibold text-slate-300 tracking-wider">{alignmentText}</p>
                 )}
             </div>
 
@@ -60,23 +61,23 @@ const UnitCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
             <div className="px-1 pb-1 flex-grow flex flex-col">
                 {card.traits && (
                     <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
-                        <p className={`text-sm font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                        <p className={`text-[10px] font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
                     </div>
                 )}
                 <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
-                    <p className="text-sm text-slate-200 leading-snug">{card.description}</p>
+                    <p className="text-[10px] text-slate-200 leading-snug">{card.description}</p>
                 </div>
             </div>
 
             <div className="flex justify-between items-center p-1">
-                <div className={`w-16 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-xl ${colors.name}`}>{`⚔️ ${card.critical ?? 1}`}</p>
+                <div className={`px-2 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
+                    <p className={`font-black text-base ${colors.name}`}>{`⚔️ ${card.critical ?? 1}`}</p>
                 </div>
-                <div className={`w-20 h-12 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-2xl ${colors.name}`}>{card.power}</p>
+                <div className={`px-3 h-12 rounded-lg ${colors.tag} flex items-center justify-center`}>
+                    <p className={`font-black text-lg ${colors.name}`}>{card.power}</p>
                 </div>
-                <div className={`w-16 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-xl ${colors.name}`}>{`🛡️ ${card.shield ?? 0}`}</p>
+                <div className={`px-2 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
+                    <p className={`font-black text-base ${colors.name}`}>{`🛡️ ${card.shield ?? 0}`}</p>
                 </div>
             </div>
         </CardLayout>
@@ -88,9 +89,9 @@ const SpellCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-md ${colors.name} uppercase`}>{card.name}</h3>
+                <h3 className={`font-bold text-sm ${colors.name} uppercase`}>{card.name}</h3>
                 {card.element && (
-                    <p className="text-xs font-semibold text-slate-300 tracking-wider">{card.element.toUpperCase()}</p>
+                    <p className="text-[8px] font-semibold text-slate-300 tracking-wider">{card.element.toUpperCase()}</p>
                 )}
             </div>
 
@@ -103,13 +104,14 @@ const SpellCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
             <div className="px-1 pb-1 flex-grow flex flex-col">
                 {card.traits && (
                     <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
-                        <p className={`text-sm font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                        <p className={`text-[10px] font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
                     </div>
                 )}
                 <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
-                    <p className="text-sm text-slate-200 leading-snug italic text-center my-auto">{card.description}</p>
+                    <p className="text-[10px] text-slate-200 leading-snug italic text-center my-auto">{card.description}</p>
                 </div>
             </div>
+            <div className="h-14"></div>
         </CardLayout>
     );
 }
@@ -119,9 +121,9 @@ const EquipmentCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-md ${colors.name} uppercase`}>{card.name}</h3>
+                <h3 className={`font-bold text-sm ${colors.name} uppercase`}>{card.name}</h3>
                 {card.equipmentType && (
-                    <p className="text-xs font-semibold text-slate-300 tracking-wider">{card.equipmentType.toUpperCase()}</p>
+                    <p className="text-[8px] font-semibold text-slate-300 tracking-wider">{card.equipmentType.toUpperCase()}</p>
                 )}
             </div>
             <div className="p-1 bg-black/30">
@@ -132,13 +134,14 @@ const EquipmentCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
             <div className="px-1 pb-1 flex-grow flex flex-col">
                 {card.traits && (
                     <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
-                        <p className={`text-sm font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                        <p className={`text-[10px] font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
                     </div>
                 )}
                 <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
-                    <p className="text-sm text-slate-200 leading-snug">{card.description}</p>
+                    <p className="text-[10px] text-slate-200 leading-snug">{card.description}</p>
                 </div>
             </div>
+            <div className="h-14"></div>
         </CardLayout>
     );
 }

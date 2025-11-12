@@ -63,9 +63,9 @@ const Board: React.FC<BoardProps> = ({
     const zones = isPlayer ? playerZoneCards : opponentZoneCards;
 
     return (
-        <div className="h-full w-full flex justify-center items-center gap-2 p-1">
+        <div className="h-full w-full flex justify-center items-center gap-4 p-1">
             {zones.map((card, index) => (
-                <div key={index} className="h-full aspect-[8/13]">
+                <div key={index} className="w-32 h-48">
                     {renderZone(zoneTypes[index], card)}
                 </div>
             ))}

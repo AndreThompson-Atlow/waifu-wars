@@ -6,7 +6,7 @@ export const TIME_SLOTS: TimeSlot[] = ['Morning', 'Afternoon', 'Evening'];
 export const CARDS: CardData[] = [
     {
         id: 'card_unit_example',
-        name: 'Valiant Adventurer',
+        name: 'Adventurer',
         type: 'unit',
         rarity: 'Rare',
         moralAlignment: 'Good',

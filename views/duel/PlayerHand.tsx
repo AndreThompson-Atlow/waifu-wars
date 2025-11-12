@@ -13,7 +13,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOpponent = false }) =>
     return (
         <div className={`h-full w-full flex justify-center items-center gap-2 p-1`}>
             {cards.map((card, index) => (
-                <div key={index} className="h-full aspect-[8/13]">
+                <div key={index} className="w-32 h-auto aspect-[2/3]">
                     {isOpponent ? <CardBack /> : <Card card={card} />}
                 </div>
             ))}
