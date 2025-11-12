@@ -2,22 +2,20 @@
 import React from 'react';
 import { CardData } from '../../types';
 import Card from '../../components/ui/Card';
+import CardBack from '../../components/ui/CardBack';
 
 interface PlayerHandProps {
-    cards: CardData[];
+    cards: (CardData | null)[];
+    isOpponent?: boolean;
 }
 
-const PlayerHand: React.FC<PlayerHandProps> = ({ cards }) => {
+const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOpponent = false }) => {
     return (
-        <div className="h-48 flex justify-center items-center gap-4 bg-black/30 p-2 rounded-lg">
+        <div className={`h-full w-full flex justify-center items-center gap-2 p-1`}>
             {cards.map((card, index) => (
-                <div key={index} className="h-full aspect-[2/3] transform hover:-translate-y-4 hover:z-10 transition-transform duration-200">
-                    <Card card={card} />
+                <div key={index} className="h-full aspect-[8/13]">
+                    {isOpponent ? <CardBack /> : <Card card={card} />}
                 </div>
-            ))}
-            {/* Fill empty slots */}
-            {Array.from({ length: Math.max(0, 3 - cards.length) }).map((_, index) => (
-                <div key={`empty-${index}`} className="h-full aspect-[2/3] bg-gray-800/50 border-2 border-dashed border-gray-600 rounded-lg" />
             ))}
         </div>
     );
