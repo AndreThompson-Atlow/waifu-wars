@@ -44,33 +44,33 @@ const UnitCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
 
     return (
         <CardLayout card={card}>
-            <div className={`p-2 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-lg ${colors.name} uppercase`}>{card.name}</h3>
+            <div className={`p-1 ${colors.tag} text-white text-center`}>
+                <h3 className={`font-bold text-md ${colors.name} uppercase`}>{card.name}</h3>
                 {alignmentText && (
                     <p className="text-xs font-semibold text-slate-300 tracking-wider">{alignmentText}</p>
                 )}
             </div>
 
-            <div className="p-1.5 bg-black/30">
-                <div className={`aspect-square w-full border-2 ${colors.border} overflow-hidden bg-black`}>
+            <div className="p-1 bg-black/30">
+                <div className={`aspect-square w-10/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
                     <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
                 </div>
             </div>
 
-            <div className="px-2 pb-2 flex-grow flex flex-col">
+            <div className="px-1 pb-1 flex-grow flex flex-col">
                 {card.traits && (
-                    <div className={`py-1.5 my-1.5 border-y-2 ${colors.border} text-center`}>
+                    <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
                         <p className={`text-sm font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
                     </div>
                 )}
-                <div className="bg-slate-900/70 p-2 rounded-md flex-grow mt-1">
-                    <p className="text-base text-slate-200 leading-normal">{card.description}</p>
+                <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
+                    <p className="text-sm text-slate-200 leading-snug">{card.description}</p>
                 </div>
             </div>
 
-            <div className="mt-auto flex justify-start items-center p-2">
-                <div className={`w-20 h-12 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-2xl ${colors.name}`}>{card.power}</p>
+            <div className="flex justify-start items-center p-1">
+                <div className={`w-16 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
+                    <p className={`font-black text-xl ${colors.name}`}>{card.power}</p>
                 </div>
             </div>
         </CardLayout>
@@ -85,7 +85,7 @@ const SpellCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
                 <h3 className={`font-bold text-lg ${colors.name} uppercase`}>{card.name}</h3>
             </div>
             <div className="p-1.5 bg-black/30">
-                <div className={`aspect-square w-full border-2 ${colors.border} overflow-hidden bg-black`}>
+                <div className={`aspect-square w-11/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
                     <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
                 </div>
             </div>
@@ -106,7 +106,7 @@ const EquipmentCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
                 <h3 className={`font-bold text-lg ${colors.name} uppercase`}>{card.name}</h3>
             </div>
             <div className="p-1.5 bg-black/30">
-                <div className={`aspect-square w-full border-2 ${colors.border} overflow-hidden bg-black`}>
+                <div className={`aspect-square w-11/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
                     <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
                 </div>
             </div>
