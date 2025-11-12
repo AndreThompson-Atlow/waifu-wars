@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardData, Rarity, MoralAlignment, PhilosophicalAlignment } from '../../types';
+import { CardData, Rarity, MoralAlignment, PhilosophicalAlignment, Element, EquipmentType } from '../../types';
 
 interface CardProps {
     card: CardData | null;
@@ -81,17 +81,27 @@ const SpellCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
     const colors = RARITY_COLORS[card.rarity];
     return (
         <CardLayout card={card}>
-            <div className={`p-2 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-lg ${colors.name} uppercase`}>{card.name}</h3>
+            <div className={`p-1 ${colors.tag} text-white text-center`}>
+                <h3 className={`font-bold text-md ${colors.name} uppercase`}>{card.name}</h3>
+                {card.element && (
+                    <p className="text-xs font-semibold text-slate-300 tracking-wider">{card.element.toUpperCase()}</p>
+                )}
             </div>
-            <div className="p-1.5 bg-black/30">
-                <div className={`aspect-square w-11/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
+
+            <div className="p-1 bg-black/30">
+                <div className={`aspect-square w-10/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
                     <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
                 </div>
             </div>
-            <div className="p-2 flex-grow flex">
-                <div className="bg-slate-900/70 p-3 rounded-md flex-grow">
-                    <p className="text-lg text-slate-200 leading-relaxed italic text-center my-auto">{card.description}</p>
+
+            <div className="px-1 pb-1 flex-grow flex flex-col">
+                {card.traits && (
+                    <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
+                        <p className={`text-sm font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                    </div>
+                )}
+                <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
+                    <p className="text-sm text-slate-200 leading-snug italic text-center my-auto">{card.description}</p>
                 </div>
             </div>
         </CardLayout>
@@ -102,17 +112,25 @@ const EquipmentCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
     const colors = RARITY_COLORS[card.rarity];
     return (
         <CardLayout card={card}>
-            <div className={`p-2 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-lg ${colors.name} uppercase`}>{card.name}</h3>
+            <div className={`p-1 ${colors.tag} text-white text-center`}>
+                <h3 className={`font-bold text-md ${colors.name} uppercase`}>{card.name}</h3>
+                {card.equipmentType && (
+                    <p className="text-xs font-semibold text-slate-300 tracking-wider">{card.equipmentType.toUpperCase()}</p>
+                )}
             </div>
-            <div className="p-1.5 bg-black/30">
-                <div className={`aspect-square w-11/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
+            <div className="p-1 bg-black/30">
+                <div className={`aspect-square w-10/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
                     <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
                 </div>
             </div>
-            <div className="p-2 flex-grow flex">
-                 <div className="bg-slate-900/70 p-3 rounded-md flex-grow">
-                    <p className="text-base text-slate-200 leading-relaxed text-center my-auto">{card.description}</p>
+            <div className="px-1 pb-1 flex-grow flex flex-col">
+                {card.traits && (
+                    <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
+                        <p className={`text-sm font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                    </div>
+                )}
+                <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
+                    <p className="text-sm text-slate-200 leading-snug">{card.description}</p>
                 </div>
             </div>
         </CardLayout>

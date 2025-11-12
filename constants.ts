@@ -1,4 +1,3 @@
-
 import { CardData, NPC, Location, LocationId, DayOfWeek, TimeSlot, District, DistrictId, Rarity } from './types';
 
 export const DAYS_OF_WEEK: DayOfWeek[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -22,6 +21,8 @@ export const CARDS: CardData[] = [
         name: 'Fireball',
         type: 'spell',
         rarity: 'Uncommon',
+        element: 'Infernal',
+        traits: ['Arcane'],
         imageUrl: `./assets/cards/fireball.png`,
         description: 'Deal 800 damage to one target unit. A classic choice for any aspiring pyromancer.',
     },
@@ -30,6 +31,8 @@ export const CARDS: CardData[] = [
         name: 'Light Armor',
         type: 'equipment',
         rarity: 'Common',
+        equipmentType: 'Armor',
+        traits: ['Armor', 'Light'],
         imageUrl: `./assets/cards/light_armor.png`,
         description: 'Equip to any Unit. It gains 300 Power. This armor is light but surprisingly durable.',
     },
