@@ -5,6 +5,9 @@ export type TimeSlot = 'Morning' | 'Afternoon' | 'Evening';
 export type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 export type DistrictId = 'downtown' | 'uptown';
 export type CardType = 'unit' | 'spell' | 'equipment';
+export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Legendary' | 'Mythic';
+export type MoralAlignment = 'Good' | 'Neutral' | 'Evil';
+export type PhilosophicalAlignment = 'Law' | 'Neutral' | 'Chaos';
 
 export interface District {
     id: DistrictId;
@@ -19,8 +22,11 @@ export interface CardData {
     imageUrl: string;
     description: string;
     type: CardType;
+    rarity: Rarity;
     attack?: number;
     defense?: number;
+    moralAlignment?: MoralAlignment;
+    philosophicalAlignment?: PhilosophicalAlignment;
 }
 
 export interface Deck {

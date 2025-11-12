@@ -1,5 +1,5 @@
 
-import { CardData, NPC, Location, LocationId, DayOfWeek, TimeSlot, District, DistrictId } from './types';
+import { CardData, NPC, Location, LocationId, DayOfWeek, TimeSlot, District, DistrictId, Rarity } from './types';
 
 export const DAYS_OF_WEEK: DayOfWeek[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 export const TIME_SLOTS: TimeSlot[] = ['Morning', 'Afternoon', 'Evening'];
@@ -9,6 +9,9 @@ export const CARDS: CardData[] = [
         id: 'card_unit_example',
         name: 'Valiant Adventurer',
         type: 'unit',
+        rarity: 'Rare',
+        moralAlignment: 'Good',
+        philosophicalAlignment: 'Law',
         imageUrl: `./assets/cards/adventurer.png`,
         description: 'A brave warrior who explores the unknown, ready to face any danger.',
         attack: 1800,
@@ -18,6 +21,7 @@ export const CARDS: CardData[] = [
         id: 'card_spell_example',
         name: 'Fireball',
         type: 'spell',
+        rarity: 'Uncommon',
         imageUrl: `./assets/cards/fireball.png`,
         description: 'Deal 800 damage to one target unit. A classic choice for any aspiring pyromancer.',
     },
@@ -25,6 +29,7 @@ export const CARDS: CardData[] = [
         id: 'card_equipment_example',
         name: 'Light Armor',
         type: 'equipment',
+        rarity: 'Common',
         imageUrl: `./assets/cards/light_armor.png`,
         description: 'Equip to any Unit. It gains 600 DEF. This armor is light but surprisingly durable.',
     },
@@ -32,6 +37,9 @@ export const CARDS: CardData[] = [
         id: `card_${i + 4}`,
         name: `Cyber Knight #${i + 4}`,
         type: 'unit' as const,
+        rarity: 'Common',
+        moralAlignment: 'Neutral',
+        philosophicalAlignment: 'Neutral',
         imageUrl: `./assets/cards/cyber_knight_${i + 4}.png`,
         description: 'A futuristic warrior clad in shimmering armor.',
         attack: 1000 + Math.floor(Math.random() * 1500),
