@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { CardData, Rarity, MoralAlignment, PhilosophicalAlignment, Element, EquipmentType } from '../../types';
+import CardBack from './CardBack';
 
 interface CardProps {
     card: CardData | null;
@@ -18,6 +19,9 @@ const RARITY_COLORS: Record<Rarity, { border: string; shadow: string; text: stri
 
 
 const CardLayout: React.FC<{ card: CardData, children: React.ReactNode }> = ({ card, children }) => {
+    if (!card || !card.rarity) {
+        return <div className="w-full h-full bg-slate-800 rounded-xl overflow-hidden border-2 border-red-500"><p className='text-white'>Invalid Card Data</p></div>;
+    }
     const colors = RARITY_COLORS[card.rarity];
     return (
         <div className={`w-full h-full bg-slate-800 rounded-xl overflow-hidden border-2 ${colors.border} shadow-lg ${colors.shadow} flex flex-col font-sans`}>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { CardData, DuelState } from '../types';
 import { CARDS } from '../constants';
 import PlayerHand from './duel/PlayerHand';
@@ -12,6 +12,8 @@ interface DuelViewProps {
 }
 
 const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel }) => {
+    const [hoveredCard, setHoveredCard] = useState<CardData | null>(null);
+
     const adventurerCard = CARDS.find(c => c.id === 'card_unit_example');
     const fireballCard = CARDS.find(c => c.id === 'card_spell_example');
     const armorCard = CARDS.find(c => c.id === 'card_equipment_example');
@@ -35,23 +37,21 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel }) => {
         units: [null, adventurerCard, null] as (CardData | null) [],
     };
 
-    const previewCard = CARDS.length > 0 ? CARDS[Math.floor(Math.random() * 3)] : null;
-
     return (
         <div className="h-full w-full relative bg-cover bg-center" style={{ backgroundImage: "url('./assets/ui/tabletop.png')" }}>
             {/* Game Zones */}
             <div className="absolute inset-0 flex flex-col p-4">
                 <div className="h-1/4">
-                    <PlayerHand cards={opponentHand} isOpponent={true} />
+                    <PlayerHand cards={opponentHand} isOpponent={true} onCardHover={setHoveredCard} />
                 </div>
                 <div className="h-1/4">
-                    <Board {...opponentBoard} />
+                    <Board {...opponentBoard} onCardHover={setHoveredCard} />
                 </div>
                 <div className="h-1/4">
-                    <Board {...playerBoard} isPlayer={true} />
+                    <Board {...playerBoard} isPlayer={true} onCardHover={setHoveredCard} />
                 </div>
                 <div className="h-1/4">
-                    <PlayerHand cards={playerHand} />
+                    <PlayerHand cards={playerHand} onCardHover={setHoveredCard} />
                 </div>
             </div>
 
@@ -81,8 +81,8 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel }) => {
                 <button onClick={onEndDuel} className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Concede</button>
             </div>
             
-            <div className="absolute top-4 left-4 z-10">
-                <CardDetails card={previewCard} />
+            <div onMouseLeave={() => setHoveredCard(null)} className="absolute top-4 left-4 z-10">
+                <CardDetails card={hoveredCard} />
             </div>
         </div>
     );

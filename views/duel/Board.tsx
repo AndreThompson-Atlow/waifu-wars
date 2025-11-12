@@ -11,6 +11,7 @@ interface BoardProps {
     extraDeck: (CardData | null)[];
     banished: (CardData | null)[];
     units: (CardData | null)[];
+    onCardHover: (card: CardData | null) => void;
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -19,7 +20,8 @@ const Board: React.FC<BoardProps> = ({
     discard,
     extraDeck,
     banished,
-    units
+    units,
+    onCardHover
 }) => {
     const discardTopCard = discard.length > 0 ? discard[discard.length - 1] : null;
     const unitZones = Array(3).fill(null).map((_, i) => units[i] || null);
@@ -64,11 +66,21 @@ const Board: React.FC<BoardProps> = ({
 
     return (
         <div className="h-full w-full flex justify-center items-center gap-4 p-1">
-            {zones.map((card, index) => (
-                <div key={index} className="w-32 h-48">
-                    {renderZone(zoneTypes[index], card)}
-                </div>
-            ))}
+            {zones.map((card, index) => {
+                const zoneType = zoneTypes[index];
+                const isFaceDownZone = ['deck', 'extraDeck', 'banished'].includes(zoneType);
+
+                return (
+                    <div 
+                        key={index} 
+                        className="w-32 h-48"
+                        onMouseEnter={() => onCardHover(isFaceDownZone ? null : card)}
+                        onMouseLeave={() => onCardHover(null)}
+                    >
+                        {renderZone(zoneType, card)}
+                    </div>
+                )
+            })}
         </div>
     );
 };
