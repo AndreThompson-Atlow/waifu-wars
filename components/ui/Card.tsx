@@ -68,9 +68,15 @@ const UnitCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
                 </div>
             </div>
 
-            <div className="flex justify-start items-center p-1">
+            <div className="flex justify-between items-center p-1">
                 <div className={`w-16 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-xl ${colors.name}`}>{card.power}</p>
+                    <p className={`font-black text-xl ${colors.name}`}>{`⚔️ ${card.critical ?? 1}`}</p>
+                </div>
+                <div className={`w-20 h-12 rounded-lg ${colors.tag} flex items-center justify-center`}>
+                    <p className={`font-black text-2xl ${colors.name}`}>{card.power}</p>
+                </div>
+                <div className={`w-16 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
+                    <p className={`font-black text-xl ${colors.name}`}>{`🛡️ ${card.shield ?? 0}`}</p>
                 </div>
             </div>
         </CardLayout>

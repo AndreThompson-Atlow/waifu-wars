@@ -25,6 +25,8 @@ export interface CardData {
     type: CardType;
     rarity: Rarity;
     power?: number;
+    critical?: number;
+    shield?: number;
     traits?: string[];
     moralAlignment?: MoralAlignment;
     philosophicalAlignment?: PhilosophicalAlignment;

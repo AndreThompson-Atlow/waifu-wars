@@ -15,6 +15,8 @@ export const CARDS: CardData[] = [
         imageUrl: `./assets/cards/adventurer.png`,
         description: 'When this card is summoned, you can add 1 \"Holy\" spell from your deck to your hand.',
         power: 1500,
+        critical: 1,
+        shield: 0,
     },
     {
         id: 'card_spell_example',
@@ -47,6 +49,8 @@ export const CARDS: CardData[] = [
         imageUrl: `./assets/cards/cyber_knight_${i + 4}.png`,
         description: 'A futuristic warrior clad in shimmering armor.',
         power: 1000 + Math.floor(Math.random() * 1000),
+        critical: 1,
+        shield: 0,
     }))
 ];
 
