@@ -1,12 +1,14 @@
-
 import React from 'react';
-import { CARDS } from '../constants';
 import Card from '../components/ui/Card';
+import { CARDS } from '../constants';
 import { CardData } from '../types';
 
 const CardDeveloperView: React.FC = () => {
-    const cardIdsToShow = ['card_unit_example', 'card_spell_example', 'card_equipment_example'];
-    const cardsToShow = cardIdsToShow.map(id => CARDS.find(c => c.id === id)).filter(Boolean) as CardData[];
+    const cardsToShow: CardData[] = [
+        CARDS.find(c => c.type === 'unit')!,
+        CARDS.find(c => c.type === 'spell')!,
+        CARDS.find(c => c.type === 'equipment')!,
+    ];
 
     return (
         <div className="p-8 h-full flex flex-col bg-gray-900">
@@ -16,7 +18,7 @@ const CardDeveloperView: React.FC = () => {
                 {cardsToShow.map(card => (
                     <div 
                       key={card.id} 
-                      className="w-64 h-96"
+                      className="w-80 h-[520px]"
                     >
                       <Card card={card} />
                     </div>

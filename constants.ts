@@ -12,10 +12,10 @@ export const CARDS: CardData[] = [
         rarity: 'Rare',
         moralAlignment: 'Good',
         philosophicalAlignment: 'Law',
+        traits: ['Human', 'Knight', 'Holy Order'],
         imageUrl: `./assets/cards/adventurer.png`,
-        description: 'A brave warrior who explores the unknown, ready to face any danger.',
-        attack: 1800,
-        defense: 1200,
+        description: 'When this card is summoned, you can add 1 \"Holy\" spell from your deck to your hand.',
+        power: 1500,
     },
     {
         id: 'card_spell_example',
@@ -31,7 +31,7 @@ export const CARDS: CardData[] = [
         type: 'equipment',
         rarity: 'Common',
         imageUrl: `./assets/cards/light_armor.png`,
-        description: 'Equip to any Unit. It gains 600 DEF. This armor is light but surprisingly durable.',
+        description: 'Equip to any Unit. It gains 300 Power. This armor is light but surprisingly durable.',
     },
     ...Array.from({ length: 97 }, (_, i) => ({
         id: `card_${i + 4}`,
@@ -40,10 +40,10 @@ export const CARDS: CardData[] = [
         rarity: 'Common',
         moralAlignment: 'Neutral',
         philosophicalAlignment: 'Neutral',
+        traits: ['Cyborg', 'Warrior', 'Cyber Corp'],
         imageUrl: `./assets/cards/cyber_knight_${i + 4}.png`,
         description: 'A futuristic warrior clad in shimmering armor.',
-        attack: 1000 + Math.floor(Math.random() * 1500),
-        defense: 1000 + Math.floor(Math.random() * 1500),
+        power: 1000 + Math.floor(Math.random() * 1000),
     }))
 ];
 

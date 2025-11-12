@@ -1,4 +1,3 @@
-
 export type View = 'home' | 'location' | 'collection' | 'deckBuilder' | 'deckSelection' | 'duel' | 'shop' | 'districtSelection' | 'locationSelection' | 'cardDeveloperView';
 export type LocationId = 'home' | 'shop' | 'park' | 'arcade';
 export type TimeSlot = 'Morning' | 'Afternoon' | 'Evening';
@@ -23,8 +22,8 @@ export interface CardData {
     description: string;
     type: CardType;
     rarity: Rarity;
-    attack?: number;
-    defense?: number;
+    power?: number;
+    traits?: string[];
     moralAlignment?: MoralAlignment;
     philosophicalAlignment?: PhilosophicalAlignment;
 }

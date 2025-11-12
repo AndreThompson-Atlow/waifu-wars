@@ -16,7 +16,7 @@ import CardDeveloperView from './views/CardDeveloperView';
 
 const App: React.FC = () => {
     const [gameState, setGameState] = useState<GameState>({
-        currentView: 'home',
+        currentView: 'cardDeveloperView',
         time: { day: 'Monday', slot: 'Morning' },
         currentLocationId: 'home',
         player: {
