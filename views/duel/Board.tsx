@@ -106,16 +106,10 @@ const Board: React.FC<BoardProps> = ({
         <div className="h-full w-full flex justify-center items-center gap-4 p-1">
             {finalLayout.map((zone, index) => (
                 <Zone
-                    key={index}
-                    label={zone.label}
-                    card={zone.card}
-                    count={zone.count}
-                    showBack={zone.showBack}
-                    onCardHover={onCardHover}
-                    onClick={zone.onClick}
-                    isUnit={zone.isUnit}
-                    isHighlighted={zone.isHighlighted}
-                />
+                key={index}
+                {...zone} // This spreads all properties from the zone object
+                onCardHover={onCardHover} // Still pass props that aren't on the zone object
+            />
             ))}
         </div>
     );

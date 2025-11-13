@@ -38,7 +38,7 @@ const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | '
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
                 <div className="truncate">
-                    <h3 className={`font-bold ${isHandCard ? 'text-xs' : 'text-sm'} ${colors.name} uppercase truncate`}>{card.name}</h3>
+                    <h3 className={`font-bold ${isHandCard ? 'text-[8px]' : 'text-xs'} ${colors.name} uppercase truncate`}>{card.name}</h3>
                 </div>
             </div>
 
@@ -87,7 +87,7 @@ const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | 
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
                 <div className="truncate">
-                    <h3 className={`font-bold ${isHandCard ? 'text-xs' : 'text-sm'} ${colors.name} uppercase truncate`}>{card.name}</h3>
+                    <h3 className={`font-bold ${isHandCard ? 'text-[8px]' : 'text-xs'} ${colors.name} uppercase truncate`}>{card.name}</h3>
                 </div>
             </div>
 
@@ -131,7 +131,7 @@ const EquipmentCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
                 <div className="truncate">
-                    <h3 className={`font-bold ${isHandCard ? 'text-xs' : 'text-sm'} ${colors.name} uppercase truncate`}>{card.name}</h3>
+                    <h3 className={`font-bold ${isHandCard ? 'text-[8px]' : 'text-xs'} ${colors.name} uppercase truncate`}>{card.name}</h3>
                 </div>
             </div>
             <div className="relative bg-black/30">
