@@ -135,3 +135,9 @@ export interface GameState {
     editingDeckId: number | null;
     selectedDistrictId: DistrictId | null;
 }
+
+// Board units hold the card's original data and any temporary in-duel properties. 
+export interface BoardUnit {
+    card: CardData;
+    canAttack: boolean;
+}

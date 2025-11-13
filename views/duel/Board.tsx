@@ -32,7 +32,7 @@ const Zone: React.FC<{
 
     return (
         <div
-            className="h-full aspect-[2/3] relative"
+            className="h-full aspect-[2/3] relative min-w-0"
             onMouseEnter={() => onCardHover(showBack ? null : card || null)}
             onMouseLeave={() => onCardHover(null)}
             onClick={onClick}
@@ -44,12 +44,12 @@ const Zone: React.FC<{
             ) : showBack ? (
                 <div className="relative w-full h-full">
                     <CardBack />
-                    {count !== undefined && <p className="absolute bottom-1 right-2 text-white font-bold text-lg" style={{ textShadow: '0 0 3px #000' }}>{count}</p>}
+                    {count !== undefined && <p className="absolute bottom-1 right-2 text-white font-bold text-xl" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>{count}</p>}
                 </div>
             ) : (
                 <div className={`relative w-full h-full ${onClick ? 'cursor-pointer' : ''} ${isHighlighted ? 'border-yellow-400 border-4 rounded-lg shadow-lg shadow-yellow-400/50' : ''}`}>
                     <Card card={card} view="simplified" />
-                    {count !== undefined && count > 1 && <p className="absolute bottom-1 right-2 text-white font-bold text-lg" style={{ textShadow: '0 0 3px #000' }}>{count}</p>}
+                    {count !== undefined && count > 1 && <p className="absolute bottom-1 right-2 text-white font-bold text-xl" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>{count}</p>}
                 </div>
             )}
         </div>

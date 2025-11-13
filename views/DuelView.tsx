@@ -5,6 +5,7 @@ import { TEST_CARDS } from '../constants';
 import PlayerHand from './duel/PlayerHand';
 import Board from './duel/Board';
 import CardDetails from './duel/CardDetails';
+import { gameManager } from '../managers/GameManager';
 
 interface DuelViewProps {
     duelState: DuelState;
@@ -25,6 +26,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
     const opponent = duelState.opponent;
 
     const isPlayerTurn = duelState.activePlayerId === player.id;
+    const canAttack = gameManager.canPlayerAttack(duelState, player.id);
 
     const playerHand = player.hand.map(getCardData) as CardData[];
     const opponentHand = Array(opponent.hand.length).fill(null);
@@ -89,7 +91,8 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
     const getPhaseButtonText = (phase: TurnPhase) => {
         switch (phase) {
             case 'summon': return 'Enter Pre-Combat';
-            case 'pre-combat': return 'Enter Combat';
+            case 'pre-combat': 
+                return canAttack ? 'Enter Combat' : 'End Turn';
             case 'combat': return 'End Turn';
             default: return '';
         }

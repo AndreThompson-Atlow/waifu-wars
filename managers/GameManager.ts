@@ -1,4 +1,3 @@
-
 import { DuelState, PlayerState, UnitInstance, TurnPhase, CardData, DuelPlayerState } from '../types';
 import { NPCS, TEST_CARDS } from '../constants/index';
 import { aiManager } from './AIManager';
@@ -96,7 +95,7 @@ class GameManager {
             
             const newHand = player.hand.filter((c, i) => i !== cardInHandIndex);
             const newUnits = [...player.board.units];
-            newUnits[slotIndex] = { cardId, currentShield: cardData.shield!, canAttack: false };
+            newUnits[slotIndex] = { cardId, currentShield: cardData.shield!, canAttack: true };
             const newBoard = { ...player.board, units: newUnits };
             newPlayerState = { ...player, hand: newHand, board: newBoard, hasSummonedUnitThisTurn: true };
 
@@ -116,7 +115,7 @@ class GameManager {
     }
 
     attack(duelState: DuelState, attackerId: string, attackerSlotIndex: number, targetSlotIndex: number | null): DuelState {
-        if (duelState.phase !== 'combat') return duelState;
+        if (duelState.phase !== 'combat' || duelState.turn === 1) return duelState;
 
         const attackerPlayer = this.getPlayer(duelState, attackerId);
         const opponentPlayer = attackerId === duelState.player.id ? duelState.opponent : duelState.player;
@@ -172,6 +171,18 @@ class GameManager {
         return this.updatePlayerState(newDuelState, opponentPlayer.id, newOpponentPlayerState);
     }
 
+    canPlayerAttack(duelState: DuelState, playerId: string): boolean {
+        const player = this.getPlayer(duelState, playerId);
+    
+        if (duelState.turn === 1) {
+            return false;
+        }
+    
+        // The player can attack if and only if at least one of their units can attack.
+        // This single check correctly implies that they have units.
+        return player.board.units.some(u => u && u.canAttack);
+    }
+
     advancePhase(duelState: DuelState): DuelState {
         const activePlayerId = duelState.activePlayerId;
         let newPhase: TurnPhase;
@@ -184,6 +195,10 @@ class GameManager {
                 newPhase = 'pre-combat';
                 break;
             case 'pre-combat':
+                if (!this.canPlayerAttack(duelState, activePlayerId)) {
+                    newPhase = 'dusk';
+                    return this.dusk({ ...duelState, phase: newPhase });
+                }
                 newPhase = 'combat';
                 break;
             case 'combat':
