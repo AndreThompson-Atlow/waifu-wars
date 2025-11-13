@@ -17,7 +17,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOpponent = false, onCa
             {cards.map((card, index) => (
                 <div 
                     key={index} 
-                    className={`h-full aspect-[2/3] ${onCardClick && !isOpponent ? 'cursor-pointer' : ''}`}
+                    className={`h-full aspect-[2/3] min-w-0 ${onCardClick && !isOpponent ? 'cursor-pointer' : ''}`}
                     onMouseEnter={() => onCardHover(card)}
                     onMouseLeave={() => onCardHover(null)}
                     onClick={() => onCardClick && card && onCardClick(card)}
