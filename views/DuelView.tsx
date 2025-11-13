@@ -81,7 +81,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel }) => {
                 <button onClick={onEndDuel} className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Concede</button>
             </div>
             
-            <div onMouseLeave={() => setHoveredCard(null)} className="absolute top-4 left-4 z-10">
+            <div onMouseLeave={() => setHoveredCard(null)} className="absolute top-1/2 left-4 -translate-y-1/2 z-10">
                 <CardDetails card={hoveredCard} />
             </div>
         </div>

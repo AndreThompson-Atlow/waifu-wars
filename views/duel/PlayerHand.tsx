@@ -16,11 +16,11 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOpponent = false, onCa
             {cards.map((card, index) => (
                 <div 
                     key={index} 
-                    className="w-32 h-auto aspect-[2/3]"
+                    className="h-full aspect-[2/3]"
                     onMouseEnter={() => onCardHover(card)}
                     onMouseLeave={() => onCardHover(null)}
                 >
-                    {isOpponent ? <CardBack /> : <Card card={card} />}
+                    {isOpponent ? <CardBack /> : <Card card={card} view='simplified' />}
                 </div>
             ))}
         </div>

@@ -33,9 +33,9 @@ const Board: React.FC<BoardProps> = ({
         const isFaceDown = ['deck', 'extraDeck', 'banished'].includes(type);
 
         if (isUnitZone) {
-            return <Card card={card} />;
+            return <Card card={card} view='simplified' />;
         } else if (isDiscard) {
-            return isEmpty ? <div className="w-full h-full bg-black/10 rounded-xl" /> : <Card card={card} />;
+            return isEmpty ? <div className="w-full h-full bg-black/10 rounded-xl" /> : <Card card={card} view='simplified' />;
         } else if (isFaceDown) {
             return isEmpty ? <div className="w-full h-full bg-black/10 rounded-xl" /> : <CardBack />;
         }
@@ -73,7 +73,7 @@ const Board: React.FC<BoardProps> = ({
                 return (
                     <div 
                         key={index} 
-                        className="w-32 h-48"
+                        className="h-full aspect-[2/3]"
                         onMouseEnter={() => onCardHover(isFaceDownZone ? null : card)}
                         onMouseLeave={() => onCardHover(null)}
                     >

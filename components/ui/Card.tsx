@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { CardData, Rarity, MoralAlignment, PhilosophicalAlignment, Element, EquipmentType } from '../../types';
-import CardBack from './CardBack';
+import { CardData, Rarity } from '../../types';
 
 interface CardProps {
     card: CardData | null;
     onClick?: () => void;
     className?: string;
+    view?: 'full' | 'simplified';
 }
 
 const RARITY_COLORS: Record<Rarity, { border: string; shadow: string; text: string; name: string; tag: string }> = {
@@ -16,7 +16,6 @@ const RARITY_COLORS: Record<Rarity, { border: string; shadow: string; text: stri
     Legendary: { border: 'border-purple-500', shadow: 'shadow-purple-500/30', text: 'text-purple-200', name: 'text-purple-100', tag: 'bg-purple-700' },
     Mythic: { border: 'border-amber-500', shadow: 'shadow-amber-500/40', text: 'text-amber-200', name: 'text-amber-100', tag: 'bg-amber-600' },
 };
-
 
 const CardLayout: React.FC<{ card: CardData, children: React.ReactNode }> = ({ card, children }) => {
     if (!card || !card.rarity) {
@@ -30,127 +29,121 @@ const CardLayout: React.FC<{ card: CardData, children: React.ReactNode }> = ({ c
     );
 };
 
-const getAlignmentText = (moral?: MoralAlignment, philosophical?: PhilosophicalAlignment) => {
-    if (!moral || !philosophical) return null;
-    
-    let philosophicalText = philosophical.toUpperCase();
-    if (philosophical === 'Law') {
-        philosophicalText = 'LAWFUL';
-    } else if (philosophical === 'Chaos') {
-        philosophicalText = 'CHAOTIC';
-    }
-
-    return `${philosophicalText} - ${moral.toUpperCase()}`;
-}
-
-const UnitCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
+const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> = ({ card, view }) => {
     const colors = RARITY_COLORS[card.rarity];
-    const alignmentText = getAlignmentText(card.moralAlignment, card.philosophicalAlignment);
+    const isSimplified = view === 'simplified';
 
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-sm ${colors.name} uppercase`}>{card.name}</h3>
-                {alignmentText && (
-                    <p className="text-[8px] font-semibold text-slate-300 tracking-wider">{alignmentText}</p>
-                )}
+                <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
             </div>
 
-            <div className="p-1 bg-black/30">
-                <div className={`aspect-square w-10/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
-                    <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
+            <div className="relative bg-black/30">
+                <div className={`aspect-square w-full border-y-2 ${colors.border} overflow-hidden bg-black`}>
+                    <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
                 </div>
-            </div>
-
-            <div className="px-1 pb-1 flex-grow flex flex-col">
                 {card.traits && (
-                    <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
-                        <p className={`text-[10px] font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                    <div className="absolute bottom-1 w-full text-center px-1">
+                        <p className={`text-white font-semibold italic truncate ${isSimplified ? 'text-[9px]' : 'text-xs'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
+                            {card.traits.join(' - ')}
+                        </p>
                     </div>
                 )}
-                <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
-                    <p className="text-[10px] text-slate-200 leading-snug">{card.description}</p>
-                </div>
             </div>
 
-            <div className="flex justify-between items-center p-1">
-                <div className={`px-2 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-base ${colors.name}`}>{`⚔️ ${card.critical ?? 1}`}</p>
+            {view === 'full' && (
+                 <div className="px-1 pb-1 flex-grow flex flex-col mt-1">
+                    <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow ">
+                        <p className="text-[10px] text-slate-200 leading-snug">{card.description}</p>
+                    </div>
                 </div>
-                <div className={`px-3 h-12 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-lg ${colors.name}`}>{card.power}</p>
+            )}
+
+            <div className={`flex justify-between items-center mt-auto ${isSimplified ? 'p-0.5' : 'p-1'}`}>
+                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? 'h-7 px-1' : 'h-10 px-2'}`}>
+                    <p className={`font-black ${colors.name} ${isSimplified ? 'text-[10px]' : 'text-base'}`}>{`⚔️ ${card.critical ?? 1}`}</p>
                 </div>
-                <div className={`px-2 h-10 rounded-lg ${colors.tag} flex items-center justify-center`}>
-                    <p className={`font-black text-base ${colors.name}`}>{`🛡️ ${card.shield ?? 0}`}</p>
+                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? 'h-9 px-1.5' : 'h-12 px-3'}`}>
+                    <p className={`font-black ${colors.name} ${isSimplified ? 'text-sm' : 'text-lg'}`}>{card.power}</p>
+                </div>
+                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? 'h-7 px-1' : 'h-10 px-2'}`}>
+                    <p className={`font-black ${colors.name} ${isSimplified ? 'text-[10px]' : 'text-base'}`}>{`🛡️ ${card.shield ?? 0}`}</p>
                 </div>
             </div>
         </CardLayout>
     );
 }
 
-const SpellCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
+const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> = ({ card, view }) => {
     const colors = RARITY_COLORS[card.rarity];
+    const isSimplified = view === 'simplified';
+
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-sm ${colors.name} uppercase`}>{card.name}</h3>
-                {card.element && (
-                    <p className="text-[8px] font-semibold text-slate-300 tracking-wider">{card.element.toUpperCase()}</p>
-                )}
+                <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
             </div>
 
-            <div className="p-1 bg-black/30">
-                <div className={`aspect-square w-10/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
-                    <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
+            <div className="relative bg-black/30">
+                <div className={`aspect-square w-full border-y-2 ${colors.border} overflow-hidden bg-black`}>
+                    <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
                 </div>
-            </div>
-
-            <div className="px-1 pb-1 flex-grow flex flex-col">
                 {card.traits && (
-                    <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
-                        <p className={`text-[10px] font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                    <div className="absolute bottom-1 w-full text-center px-1">
+                        <p className={`text-white font-semibold italic truncate ${isSimplified ? 'text-[9px]' : 'text-xs'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
+                            {card.traits.join(' - ')}
+                        </p>
                     </div>
                 )}
-                <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
-                    <p className="text-[10px] text-slate-200 leading-snug italic text-center my-auto">{card.description}</p>
-                </div>
             </div>
-            <div className="h-14"></div>
+
+            {view === 'full' && (
+                <div className="px-1 pb-1 flex-grow flex flex-col mt-1">
+                    <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow flex">
+                        <p className="text-[10px] text-slate-200 leading-snug italic text-center m-auto">{card.description}</p>
+                    </div>
+                </div>
+            )}
+            <div className={`mt-auto ${view === 'full' ? 'h-14' : 'h-4'}`}></div>
         </CardLayout>
     );
 }
 
-const EquipmentCardLayout: React.FC<{ card: CardData }> = ({ card }) => {
+const EquipmentCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> = ({ card, view }) => {
     const colors = RARITY_COLORS[card.rarity];
+    const isSimplified = view === 'simplified';
+
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-sm ${colors.name} uppercase`}>{card.name}</h3>
-                {card.equipmentType && (
-                    <p className="text-[8px] font-semibold text-slate-300 tracking-wider">{card.equipmentType.toUpperCase()}</p>
-                )}
+                <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
             </div>
-            <div className="p-1 bg-black/30">
-                <div className={`aspect-square w-10/12 mx-auto border-2 ${colors.border} overflow-hidden bg-black`}>
-                    <img src={card.imageUrl} alt={card.name} className="w-full h-full object-contain" />
+            <div className="relative bg-black/30">
+                <div className={`aspect-square w-full border-y-2 ${colors.border} overflow-hidden bg-black`}>
+                    <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
                 </div>
-            </div>
-            <div className="px-1 pb-1 flex-grow flex flex-col">
                 {card.traits && (
-                    <div className={`py-1 my-1 border-y-2 ${colors.border} text-center`}>
-                        <p className={`text-[10px] font-semibold ${colors.text} italic`}>{card.traits.join(' - ')}</p>
+                    <div className="absolute bottom-1 w-full text-center px-1">
+                        <p className={`text-white font-semibold italic truncate ${isSimplified ? 'text-[9px]' : 'text-xs'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
+                            {card.traits.join(' - ')}
+                        </p>
                     </div>
                 )}
-                <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow mt-0.5">
-                    <p className="text-[10px] text-slate-200 leading-snug">{card.description}</p>
-                </div>
             </div>
-            <div className="h-14"></div>
+            {view === 'full' && (
+                <div className="px-1 pb-1 flex-grow flex flex-col mt-1">
+                    <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow">
+                        <p className="text-[10px] text-slate-200 leading-snug">{card.description}</p>
+                    </div>
+                </div>
+            )}
+            <div className={`mt-auto ${view === 'full' ? 'h-14' : 'h-4'}`}></div>
         </CardLayout>
     );
 }
 
-const Card: React.FC<CardProps> = ({ card, onClick, className }) => {
+const Card: React.FC<CardProps> = ({ card, onClick, className, view = 'full' }) => {
     if (!card) {
         return <div className={`border-2 border-dashed border-gray-600 rounded-lg bg-black/20 ${className}`} />;
     }
@@ -158,19 +151,19 @@ const Card: React.FC<CardProps> = ({ card, onClick, className }) => {
     const renderCardLayout = () => {
         switch (card.type) {
             case 'unit':
-                return <UnitCardLayout card={card} />;
+                return <UnitCardLayout card={card} view={view} />;
             case 'spell':
-                return <SpellCardLayout card={card} />;
+                return <SpellCardLayout card={card} view={view} />;
             case 'equipment':
-                return <EquipmentCardLayout card={card} />;
+                return <EquipmentCardLayout card={card} view={view} />;
             default:
-                return <UnitCardLayout card={card} />;
+                return <UnitCardLayout card={card} view={view} />;
         }
     };
 
     return (
         <div
-            className={`relative w-full h-full transform hover:scale-105 transition-transform duration-200 cursor-pointer ${className}`}
+            className={`relative h-full w-full transform hover:scale-105 transition-transform duration-200 cursor-pointer ${className}`}
             onClick={onClick}
             title={card.name}
         >
