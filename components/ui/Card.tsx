@@ -36,7 +36,9 @@ const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> 
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                <div className="truncate">
+                    <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                </div>
             </div>
 
             <div className="relative bg-black/30">
@@ -82,7 +84,9 @@ const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }>
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                <div className="truncate">
+                    <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                </div>
             </div>
 
             <div className="relative bg-black/30">
@@ -123,14 +127,16 @@ const EquipmentCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
-                <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                <div className="truncate">
+                    <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                </div>
             </div>
             <div className="relative bg-black/30">
                 <div className={`aspect-square w-full border-y-2 ${colors.border} overflow-hidden bg-black`}>
                     <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
                 </div>
                 {card.traits && (
-                    <div className="absolute bottom-1 w-full text-center px-1">
+                    <div className="absolute bottom-1 w-.full text-center px-1">
                         <p className={`text-white font-semibold italic truncate ${isSimplified ? 'text-[9px]' : 'text-xs'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
                             {card.traits.join(' - ')}
                         </p>

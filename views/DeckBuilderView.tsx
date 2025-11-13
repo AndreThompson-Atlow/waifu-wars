@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Deck, CardData } from '../types';
-import { CARDS } from '../constants';
+import { TEST_CARDS } from '../constants/index';
 import Card from '../components/ui/Card';
 
 interface DeckBuilderViewProps {
@@ -28,7 +28,7 @@ const DeckBuilderView: React.FC<DeckBuilderViewProps> = ({ deckId, allDecks, col
         }
     }, [deckId, allDecks]);
 
-    const ownedCards = collection.map(id => CARDS.find(c => c.id === id)!).filter(Boolean);
+    const ownedCards = collection.map(id => TEST_CARDS[id]).filter(Boolean);
 
     const addCard = (cardId: string) => {
         if (deck.cards.length < 60) { // Max deck size
@@ -65,11 +65,10 @@ const DeckBuilderView: React.FC<DeckBuilderViewProps> = ({ deckId, allDecks, col
                 <h3 className="mb-2 text-lg">Deck ({deck.cards.length} / 60)</h3>
                 <div className="flex-grow overflow-y-auto pr-2 bg-gray-900/50 p-2 rounded-md space-y-1">
                     {deck.cards.map((cardId, index) => {
-                        const card = CARDS.find(c => c.id === cardId)!;
+                        const card = TEST_CARDS[cardId]!;
                         return (
                             <div key={index} onClick={() => removeCard(index)} className="flex items-center justify-between p-1 bg-gray-700 rounded cursor-pointer hover:bg-red-800 transition-colors">
                                 <span className="truncate">{card.name}</span>
-                                <span className="text-xs text-gray-400">ATK/{card.attack}</span>
                             </div>
                         )
                     })}

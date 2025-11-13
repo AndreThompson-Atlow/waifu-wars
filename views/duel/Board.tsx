@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CardData } from '../../types';
+import { CardData, BoardUnit } from '../../types';
 import Card from '../../components/ui/Card';
 import CardBack from '../../components/ui/CardBack';
 
@@ -10,8 +10,10 @@ interface BoardProps {
     discard: (CardData | null)[];
     extraDeck: (CardData | null)[];
     banished: (CardData | null)[];
-    units: (CardData | null)[];
+    units: (BoardUnit | null)[];
     onCardHover: (card: CardData | null) => void;
+    onUnitClick?: (index: number) => void;
+    onSlotClick?: (index: number) => void;
 }
 
 const Zone: React.FC<{
@@ -20,7 +22,9 @@ const Zone: React.FC<{
     count?: number;
     showBack?: boolean;
     onCardHover: (card: CardData | null) => void;
-}> = ({ label, card, count, showBack, onCardHover }) => {
+    onClick?: () => void;
+    isUnit?: boolean;
+}> = ({ label, card, count, showBack, onCardHover, onClick, isUnit }) => {
     const hasCard = card || (showBack && count && count > 0);
 
     return (
@@ -28,9 +32,10 @@ const Zone: React.FC<{
             className="h-full aspect-[2/3] relative"
             onMouseEnter={() => onCardHover(showBack ? null : card || null)}
             onMouseLeave={() => onCardHover(null)}
+            onClick={onClick}
         >
             {!hasCard ? (
-                <div className="w-full h-full bg-black/30 border-2 border-dashed border-gray-500 rounded-lg flex items-center justify-center p-2">
+                <div className={`w-full h-full bg-black/30 border-2 border-dashed border-gray-500 rounded-lg flex items-center justify-center p-2 ${onClick ? 'cursor-pointer' : ''}`}>
                     <p className="text-white font-bold text-center text-xs uppercase" style={{ textShadow: '0 0 2px #000' }}>{label}</p>
                 </div>
             ) : showBack ? (
@@ -39,7 +44,7 @@ const Zone: React.FC<{
                     {count !== undefined && <p className="absolute bottom-1 right-2 text-white font-bold text-lg" style={{ textShadow: '0 0 3px #000' }}>{count}</p>}
                 </div>
             ) : (
-                <div className="relative w-full h-full">
+                <div className={`relative w-full h-full ${onClick ? 'cursor-pointer' : ''}`}>
                     <Card card={card} view="simplified" />
                     {count !== undefined && count > 1 && <p className="absolute bottom-1 right-2 text-white font-bold text-lg" style={{ textShadow: '0 0 3px #000' }}>{count}</p>}
                 </div>
@@ -55,7 +60,9 @@ const Board: React.FC<BoardProps> = ({
     extraDeck,
     banished,
     units,
-    onCardHover
+    onCardHover,
+    onUnitClick,
+    onSlotClick
 }) => {
     const discardTopCard = discard.length > 0 ? discard[discard.length - 1] : null;
     const exiledTopCard = banished.length > 0 ? banished[0] : null;
@@ -64,7 +71,7 @@ const Board: React.FC<BoardProps> = ({
     const playerLayout = [
         { label: 'Exile', card: exiledTopCard, count: banished.length },
         { label: 'Extra Deck', showBack: true, count: extraDeck.length },
-        ...unitZones.map(card => ({ label: 'Unit Zone', card })),
+        ...unitZones.map((unit, i) => ({ label: 'Unit Zone', card: unit ? unit.card : null, isUnit: true, onClick: unit ? () => onUnitClick && onUnitClick(i) : () => onSlotClick && onSlotClick(i) })),
         { label: 'Deck', showBack: true, count: deck.length },
         { label: 'Discard', card: discardTopCard, count: discard.length }
     ];
@@ -72,7 +79,7 @@ const Board: React.FC<BoardProps> = ({
     const opponentLayout = [
         { label: 'Discard', card: discardTopCard, count: discard.length },
         { label: 'Deck', showBack: true, count: deck.length },
-        ...[...unitZones].reverse().map(card => ({ label: 'Unit Zone', card })),
+        ...[...unitZones].reverse().map((unit, i) => ({ label: 'Unit Zone', card: unit ? unit.card : null, isUnit: true, onClick: unit ? () => onUnitClick && onUnitClick(i) : undefined })),
         { label: 'Extra Deck', showBack: true, count: extraDeck.length },
         { label: 'Exile', card: exiledTopCard, count: banished.length },
     ];
@@ -89,6 +96,8 @@ const Board: React.FC<BoardProps> = ({
                     count={zone.count}
                     showBack={zone.showBack}
                     onCardHover={onCardHover}
+                    onClick={zone.onClick}
+                    isUnit={zone.isUnit}
                 />
             ))}
         </div>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { CARDS } from '../constants';
+import { TEST_CARDS } from '../constants/index';
 import Card from '../components/ui/Card';
 import { CardData, CardType } from '../types';
 
@@ -11,7 +11,7 @@ interface CollectionViewProps {
 const CollectionView: React.FC<CollectionViewProps> = ({ collection }) => {
     const [filter, setFilter] = useState<CardType | 'all'>('all');
 
-    const ownedCards = collection.map(id => CARDS.find(c => c.id === id)).filter(Boolean) as CardData[];
+    const ownedCards = collection.map(id => TEST_CARDS[id]).filter(Boolean) as CardData[];
 
     const filteredCards = ownedCards.filter(card => {
         if (filter === 'all') return true;

@@ -1,3 +1,4 @@
+
 export type View = 'home' | 'location' | 'collection' | 'deckBuilder' | 'deckSelection' | 'duel' | 'shop' | 'districtSelection' | 'locationSelection' | 'cardDeveloperView';
 export type LocationId = 'home' | 'shop' | 'park' | 'arcade';
 export type TimeSlot = 'Morning' | 'Afternoon' | 'Evening';
@@ -17,6 +18,7 @@ export interface District {
     backgroundImageUrl: string;
     locationIds: LocationId[];
 }
+
 export interface CardData {
     id: string;
     name:string;
@@ -40,14 +42,13 @@ export interface Deck {
     cards: string[];
 }
 
-export interface Player {
+export interface PlayerState {
+    id: string;
     name: string;
     avatarUrl: string;
     collection: string[];
     decks: Deck[];
     money: number;
-    playmats: string[];
-    sleeves: string[];
 }
 
 export interface NPC {
@@ -82,7 +83,7 @@ export interface Location {
     name: string;
     backgroundImageUrl: string;
     schedule: Partial<Record<DayOfWeek, Partial<Record<TimeSlot, string[]>>>>;
-    events: any[]; // Placeholder for events
+    events: any[];
     type: 'general' | 'shop' | 'home';
     inventory?: ShopInventory;
 }
@@ -92,35 +93,44 @@ export interface TimeState {
     slot: TimeSlot;
 }
 
+export interface UnitInstance {
+    cardId: string;
+    currentShield: number;
+    canAttack: boolean;
+}
+
 export interface BoardState {
-    extra: CardData[];
-    units: (CardData | null)[];
-    deck: CardData[];
-    discard: CardData[];
+    deck: string[];
+    discard: string[];
+    extraDeck: string[];
+    banished: string[];
+    units: (UnitInstance | null)[];
 }
 
 export interface DuelPlayerState {
+    id: string;
     name: string;
     avatarUrl: string;
     hp: number;
+    hand: string[];
     board: BoardState;
-    hand: CardData[];
+    hasSummonedUnitThisTurn: boolean;
 }
-
-// A partial NPC is needed for the player's side in a duel
-type PartialNpc = Partial<Omit<NPC, 'id' | 'deck' | 'dialogue'>>;
 
 export interface DuelState {
     player: DuelPlayerState;
-    opponent: DuelPlayerState & PartialNpc;
+    opponent: DuelPlayerState;
+    turn: number;
+    phase: 'draw' | 'main' | 'combat' | 'end';
+    activePlayerId: string;
 }
 
 export interface GameState {
     currentView: View;
     time: TimeState;
     currentLocationId: LocationId;
-    player: Player;
+    player: PlayerState;
     activeDuel: DuelState | null;
-    editingDeckId: number | null; // null for a new deck
+    editingDeckId: number | null;
     selectedDistrictId: DistrictId | null;
 }

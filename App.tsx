@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { GameState, View, LocationId, TimeSlot, DayOfWeek, NPC, Deck, CardData, DistrictId, DuelState } from './types';
-import { LOCATIONS, DAYS_OF_WEEK, TIME_SLOTS, NPCS, CARDS, DISTRICTS } from './constants';
+import { LOCATIONS, DAYS_OF_WEEK, TIME_SLOTS, NPCS, CARDS, DISTRICTS, TEST_CARDS } from './constants/index';
 import GameHUD from './components/GameHUD';
 import LocationView from './views/LocationView';
 import HomeView from './views/HomeView';
@@ -13,22 +13,22 @@ import ShopView from './views/ShopView';
 import DistrictSelectionView from './views/DistrictSelectionView';
 import LocationSelectionView from './views/LocationSelectionView';
 import CardDeveloperView from './views/CardDeveloperView';
+import { gameManager } from './managers/GameManager';
 
 const App: React.FC = () => {
     const [gameState, setGameState] = useState<GameState>({
-        currentView: 'cardDeveloperView',
+        currentView: 'districtSelection',
         time: { day: 'Monday', slot: 'Morning' },
         currentLocationId: 'home',
         player: {
+            id: 'player',
             name: 'Player',
-            avatarUrl: './assets/duelists/player.png',
-            collection: CARDS.slice(0, 50).map(c => c.id),
+            avatarUrl: './assets/duelists/player_avatar_1.png',
+            collection: Object.keys(TEST_CARDS),
             decks: [
-                { id: 1, name: 'My First Deck', cards: CARDS.slice(0, 20).map(c => c.id) }
+                { id: 1, name: 'My First Deck', cards: Object.keys(TEST_CARDS) }
             ],
             money: 1000,
-            playmats: ['playmat-blue'],
-            sleeves: ['sleeve-red'],
         },
         activeDuel: null,
         editingDeckId: null,
@@ -66,71 +66,35 @@ const App: React.FC = () => {
         });
     }, []);
     
-    const startDuel = (opponent: NPC) => {
-        const getCard = (id: string): CardData => CARDS.find(c => c.id === id)!;
-        
-        const playerDeck = gameState.player.decks[0]?.cards.map(getCard) || [];
-        const opponentDeck = opponent.deck.map(getCard);
-
+    const startDuel = (opponentId: string) => {
+        const duel = gameManager.createDuel(gameState.player, opponentId);
         setGameState(prev => ({
             ...prev,
             currentView: 'duel',
-            activeDuel: {
-                player: {
-                    ...prev.player,
-                    hp: 4000,
-                    board: { extra: [], units: [null, null, null], deck: playerDeck, discard: [] },
-                    hand: playerDeck.slice(0,3)
-                },
-                opponent: {
-                    ...opponent,
-                    hp: 4000,
-                    board: { extra: [], units: [null, null, null], deck: opponentDeck, discard: [] },
-                    hand: opponentDeck.slice(0,3)
-                }
-            }
-        }));
-    };
-    
-    const startDebugDuel = () => {
-        const getCard = (id: string): CardData => CARDS.find(c => c.id === id)!;
-        
-        const debugDuelState: DuelState = {
-            player: {
-                name: 'Player',
-                avatarUrl: './assets/duelists/player.png',
-                hp: 3200,
-                hand: [getCard('card_unit_example'), getCard('card_spell_example'), getCard('card_equipment_example'), CARDS[4]],
-                board: {
-                    extra: [],
-                    units: [CARDS[10], null, CARDS[11]],
-                    deck: CARDS.slice(20, 40),
-                    discard: [CARDS[15]]
-                }
-            },
-            opponent: {
-                name: 'Kaito',
-                avatarUrl: './assets/duelists/kaito.png',
-                hp: 2500,
-                hand: [CARDS[50], CARDS[51], CARDS[52]],
-                board: {
-                    extra: [],
-                    units: [CARDS[60], CARDS[61], null],
-                    deck: CARDS.slice(80, 100),
-                    discard: [CARDS[70]]
-                }
-            }
-        };
-
-        setGameState(prev => ({
-            ...prev,
-            currentView: 'duel',
-            activeDuel: debugDuelState,
+            activeDuel: duel
         }));
     };
 
     const endDuel = () => {
         setGameState(prev => ({ ...prev, activeDuel: null, currentView: prev.currentLocationId === 'home' ? 'home' : 'location' }));
+    };
+
+    const handlePlayCard = (cardId: string, slotIndex: number) => {
+        if (!gameState.activeDuel) return;
+        const newDuelState = gameManager.playCard(gameState.activeDuel, gameState.player.id, cardId, slotIndex);
+        setGameState(prev => ({ ...prev, activeDuel: { ...newDuelState } }));
+    };
+
+    const handleEndTurn = () => {
+        if (!gameState.activeDuel) return;
+        const newDuelState = gameManager.endTurn(gameState.activeDuel);
+        setGameState(prev => ({ ...prev, activeDuel: { ...newDuelState } }));
+    };
+
+    const handleUnitAttack = (attackerIndex: number, targetIndex: number | null) => {
+        if (!gameState.activeDuel) return;
+        const newDuelState = gameManager.attack(gameState.activeDuel, gameState.player.id, attackerIndex, targetIndex);
+        setGameState(prev => ({ ...prev, activeDuel: { ...newDuelState } }));
     };
 
     const startDeckEdit = (deckId: number | null) => {
@@ -161,7 +125,7 @@ const App: React.FC = () => {
 
         switch (gameState.currentView) {
             case 'location':
-                return <LocationView location={currentLocation} people={currentPeople} onStartDuel={startDuel} />;
+                return <LocationView location={currentLocation} people={currentPeople} onStartDuel={(npc) => startDuel(npc.id)} />;
             case 'home':
                 return <HomeView location={currentLocation} onNavigate={navigateTo} />;
             case 'collection':
@@ -177,7 +141,13 @@ const App: React.FC = () => {
                             onCancel={() => navigateTo('deckSelection')} />;
             case 'duel':
                 if (!gameState.activeDuel) return null;
-                return <DuelView duelState={gameState.activeDuel} onEndDuel={endDuel} />;
+                return <DuelView 
+                            duelState={gameState.activeDuel} 
+                            onEndDuel={endDuel} 
+                            onPlayCard={handlePlayCard} 
+                            onEndTurn={handleEndTurn}
+                            onUnitAttack={handleUnitAttack}
+                        />;
             case 'shop':
                 return <ShopView location={currentLocation} />;
             case 'districtSelection':
@@ -210,7 +180,7 @@ const App: React.FC = () => {
                     onAdvanceTime={advanceTime}
                     onNavigate={navigateTo}
                     onTravel={travelTo}
-                    onStartDebugDuel={startDebugDuel}
+                    onStartDebugDuel={() => startDuel('npc_rival')} // Example: always duel rival
                 />
             )}
             <main className="flex-grow overflow-hidden">
