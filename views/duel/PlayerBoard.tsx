@@ -2,16 +2,21 @@
 import React from 'react';
 import { DuelPlayerState } from '../../types';
 import Card from '../../components/ui/Card';
+import CardBack from '../../components/ui/CardBack';
 
 interface PlayerBoardProps {
     playerState: DuelPlayerState;
     isOpponent: boolean;
 }
 
-const Zone: React.FC<{ children?: React.ReactNode; label: string; isOpponent: boolean }> = ({ children, label, isOpponent }) => (
-    <div className="relative aspect-square md:aspect-video flex flex-col items-center justify-center">
-        <div className="w-full h-full">{children}</div>
-        <p className={`absolute -bottom-5 text-xs font-semibold text-white/70 ${isOpponent ? 'hidden' : ''}`}>{label}</p>
+const Zone: React.FC<{ children?: React.ReactNode; label: string; count?: number; hasCard?: boolean; }> = ({ children, label, count, hasCard }) => (
+    <div className="relative aspect-square md:aspect-video h-full flex flex-col items-center justify-center">
+        {!hasCard ? (
+             <div className="w-full h-full bg-black/30 border-2 border-dashed border-gray-500 rounded-lg flex items-center justify-center">
+                <p className="text-white font-bold text-sm uppercase" style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>{label}</p>
+                {count !== undefined && <p className="absolute bottom-1 right-1 text-white font-bold text-lg">{count}</p>}
+            </div>
+        ) : children}
     </div>
 );
 
@@ -33,20 +38,30 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerState, isOpponent }) =>
             <div className="flex-1 bg-pink-800/50 rounded-2xl p-4 border-2 border-pink-500/80 shadow-2xl">
                 <div className="grid grid-cols-5 gap-4 h-full">
                     
-                    {/* Left side slots */}
-                    <div className="flex flex-col justify-center gap-4">
-                        <Zone label="Extra" isOpponent={isOpponent}><div className="w-full h-full bg-blue-900/70 border-2 border-dashed border-blue-400 rounded-lg" /></Zone>
+                    <div className="flex flex-col justify-around gap-4">
+                        <Zone label="Extra Deck" hasCard={playerState.board.extra.length > 0} count={playerState.board.extra.length}>
+                            {playerState.board.extra.length > 0 && <CardBack />}
+                        </Zone>
+                        <Zone label="Exile" hasCard={!!playerState.board.exile[0]} count={playerState.board.exile.length}>
+                            <Card card={playerState.board.exile[0] || null} view='simplified'/>
+                        </Zone>
                     </div>
 
-                    {/* Center Unit Slots */}
                     <div className="col-span-3 grid grid-cols-3 gap-4">
-                        {playerState.board.units.map((unit, i) => <Zone key={i} label={`Unit ${i+1}`} isOpponent={isOpponent}><Card card={unit} /></Zone>)}
+                        {playerState.board.units.map((unit, i) => 
+                            <Zone key={i} label={`Unit Zone`} hasCard={!!unit}>
+                                <Card card={unit} view='simplified' />
+                            </Zone>
+                        )}
                     </div>
 
-                    {/* Right side slots */}
-                    <div className="col-start-5 flex flex-col gap-4">
-                        <Zone label="Deck" isOpponent={isOpponent}><div className="w-full h-full bg-green-900/70 border-2 border-dashed border-green-400 rounded-lg flex items-center justify-center text-xl font-bold">{playerState.board.deck.length}</div></Zone>
-                        <Zone label="Discard" isOpponent={isOpponent}><Card card={playerState.board.discard[0] || null} /></Zone>
+                    <div className="col-start-5 flex flex-col justify-around gap-4">
+                        <Zone label="Deck" hasCard={playerState.board.deck.length > 0} count={playerState.board.deck.length}>
+                           {playerState.board.deck.length > 0 && <CardBack />}
+                        </Zone>
+                        <Zone label="Discard" hasCard={!!playerState.board.discard[0]} count={playerState.board.discard.length}>
+                            <Card card={playerState.board.discard[0] || null} view='simplified' />
+                        </Zone>
                     </div>
                 </div>
             </div>

@@ -137,10 +137,16 @@ const EquipmentCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified
                     </div>
                 )}
             </div>
-            {view === 'full' && (
+            {view === 'full' ? (
                 <div className="px-1 pb-1 flex-grow flex flex-col mt-1">
                     <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow">
                         <p className="text-[10px] text-slate-200 leading-snug">{card.description}</p>
+                    </div>
+                </div>
+            ) : (
+                <div className="px-1 pb-1 flex-grow flex flex-col mt-1">
+                    <div className="bg-slate-900/70 rounded-md flex-grow flex overflow-hidden">
+                        <p className="text-[7px] text-slate-400 leading-none text-center m-auto p-1">{card.description}</p>
                     </div>
                 </div>
             )}
