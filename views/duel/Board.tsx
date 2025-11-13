@@ -14,6 +14,7 @@ interface BoardProps {
     onCardHover: (card: CardData | null) => void;
     onUnitClick?: (index: number) => void;
     onSlotClick?: (index: number) => void;
+    highlightedUnitIndices?: number[];
 }
 
 const Zone: React.FC<{
@@ -24,8 +25,10 @@ const Zone: React.FC<{
     onCardHover: (card: CardData | null) => void;
     onClick?: () => void;
     isUnit?: boolean;
-}> = ({ label, card, count, showBack, onCardHover, onClick, isUnit }) => {
+    isHighlighted?: boolean;
+}> = ({ label, card, count, showBack, onCardHover, onClick, isUnit, isHighlighted }) => {
     const hasCard = card || (showBack && count && count > 0);
+    const highlightClass = isHighlighted ? 'border-yellow-400 border-4 shadow-lg shadow-yellow-400/50' : 'border-gray-500';
 
     return (
         <div
@@ -35,7 +38,7 @@ const Zone: React.FC<{
             onClick={onClick}
         >
             {!hasCard ? (
-                <div className={`w-full h-full bg-black/30 border-2 border-dashed border-gray-500 rounded-lg flex items-center justify-center p-2 ${onClick ? 'cursor-pointer' : ''}`}>
+                <div className={`w-full h-full bg-black/30 border-2 border-dashed ${highlightClass} rounded-lg flex items-center justify-center p-2 ${onClick ? 'cursor-pointer' : ''}`}>
                     <p className="text-white font-bold text-center text-xs uppercase" style={{ textShadow: '0 0 2px #000' }}>{label}</p>
                 </div>
             ) : showBack ? (
@@ -44,7 +47,7 @@ const Zone: React.FC<{
                     {count !== undefined && <p className="absolute bottom-1 right-2 text-white font-bold text-lg" style={{ textShadow: '0 0 3px #000' }}>{count}</p>}
                 </div>
             ) : (
-                <div className={`relative w-full h-full ${onClick ? 'cursor-pointer' : ''}`}>
+                <div className={`relative w-full h-full ${onClick ? 'cursor-pointer' : ''} ${isHighlighted ? 'border-yellow-400 border-4 rounded-lg shadow-lg shadow-yellow-400/50' : ''}`}>
                     <Card card={card} view="simplified" />
                     {count !== undefined && count > 1 && <p className="absolute bottom-1 right-2 text-white font-bold text-lg" style={{ textShadow: '0 0 3px #000' }}>{count}</p>}
                 </div>
@@ -62,7 +65,8 @@ const Board: React.FC<BoardProps> = ({
     units,
     onCardHover,
     onUnitClick,
-    onSlotClick
+    onSlotClick,
+    highlightedUnitIndices = []
 }) => {
     const discardTopCard = discard.length > 0 ? discard[discard.length - 1] : null;
     const exiledTopCard = banished.length > 0 ? banished[0] : null;
@@ -71,7 +75,13 @@ const Board: React.FC<BoardProps> = ({
     const playerLayout = [
         { label: 'Exile', card: exiledTopCard, count: banished.length },
         { label: 'Extra Deck', showBack: true, count: extraDeck.length },
-        ...unitZones.map((unit, i) => ({ label: 'Unit Zone', card: unit ? unit.card : null, isUnit: true, onClick: unit ? () => onUnitClick && onUnitClick(i) : () => onSlotClick && onSlotClick(i) })),
+        ...unitZones.map((unit, i) => ({ 
+            label: 'Unit Zone', 
+            card: unit ? unit.card : null, 
+            isUnit: true, 
+            onClick: unit ? () => onUnitClick && onUnitClick(i) : () => onSlotClick && onSlotClick(i), 
+            isHighlighted: highlightedUnitIndices.includes(i) 
+        })),
         { label: 'Deck', showBack: true, count: deck.length },
         { label: 'Discard', card: discardTopCard, count: discard.length }
     ];
@@ -79,7 +89,13 @@ const Board: React.FC<BoardProps> = ({
     const opponentLayout = [
         { label: 'Discard', card: discardTopCard, count: discard.length },
         { label: 'Deck', showBack: true, count: deck.length },
-        ...[...unitZones].reverse().map((unit, i) => ({ label: 'Unit Zone', card: unit ? unit.card : null, isUnit: true, onClick: unit ? () => onUnitClick && onUnitClick(i) : undefined })),
+        ...[...unitZones].reverse().map((unit, i) => ({ 
+            label: 'Unit Zone', 
+            card: unit ? unit.card : null, 
+            isUnit: true, 
+            onClick: unit ? () => onUnitClick && onUnitClick(2-i) : undefined, 
+            isHighlighted: highlightedUnitIndices.includes(2-i)
+        })),
         { label: 'Extra Deck', showBack: true, count: extraDeck.length },
         { label: 'Exile', card: exiledTopCard, count: banished.length },
     ];
@@ -98,6 +114,7 @@ const Board: React.FC<BoardProps> = ({
                     onCardHover={onCardHover}
                     onClick={zone.onClick}
                     isUnit={zone.isUnit}
+                    isHighlighted={zone.isHighlighted}
                 />
             ))}
         </div>

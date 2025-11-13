@@ -37,7 +37,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
         discard: player.board.discard.map(getCardData) as CardData[],
         extraDeck: player.board.extraDeck.map(getCardData) as CardData[],
         banished: player.board.banished.map(getCardData) as CardData[],
-        units: playerBoardUnits as any, //TODO: Fix this
+        units: playerBoardUnits as any,
     };
 
     const opponentBoard = {
@@ -45,7 +45,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
         discard: opponent.board.discard.map(getCardData) as CardData[],
         extraDeck: opponent.board.extraDeck.map(getCardData) as CardData[],
         banished: opponent.board.banished.map(getCardData) as CardData[],
-        units: opponentBoardUnits as any, //TODO: Fix this
+        units: opponentBoardUnits as any,
     };
 
     // --- Event Handlers ---
@@ -66,7 +66,12 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
         if (!isPlayerTurn || duelState.phase !== 'combat') return;
         const unit = player.board.units[unitIndex];
         if (unit && unit.canAttack) {
-            setSelectingTarget(unitIndex);
+            const opponentHasUnits = opponent.board.units.some(u => u !== null);
+            if (opponentHasUnits) {
+                setSelectingTarget(unitIndex);
+            } else {
+                onUnitAttack(unitIndex, null); // No units to target, attack player directly
+            }
         }
     };
 
@@ -76,11 +81,12 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
         setSelectingTarget(null);
     };
 
-    const handleAttackPlayer = () => {
-        if (selectingTarget === null) return;
-        onUnitAttack(selectingTarget, null); // null target means direct attack
+    const handleCancelAttack = () => {
         setSelectingTarget(null);
     }
+
+    const opponentUnitIndices = opponentBoardUnits.map((unit, index) => unit ? index : -1).filter(index => index !== -1);
+    const highlightedIndices = selectingTarget !== null ? opponentUnitIndices : [];
 
     return (
         <div className="h-full w-full relative bg-cover bg-center" style={{ backgroundImage: "url('./assets/ui/tabletop.png')" }}>
@@ -90,7 +96,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
                     <PlayerHand cards={opponentHand} isOpponent={true} onCardHover={setHoveredCard} />
                 </div>
                 <div className="h-[30%]">
-                    <Board {...opponentBoard} onCardHover={setHoveredCard} onUnitClick={handleUnitClickOnOpponentBoard}/>
+                    <Board {...opponentBoard} onCardHover={setHoveredCard} onUnitClick={handleUnitClickOnOpponentBoard} highlightedUnitIndices={highlightedIndices}/>
                 </div>
                 <div className="h-[30%]">
                     <Board {...playerBoard} isPlayer={true} onCardHover={setHoveredCard} onSlotClick={handleSlotClickOnBoard} onUnitClick={handleUnitClickOnPlayerBoard} />
@@ -102,7 +108,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
 
             {/* UI Overlays */}
             <div className="absolute top-4 right-4 z-10">
-                <div className="flex flex-col-reverse items-center justify-center w-40 bg-black/30 p-2 rounded-lg" onClick={handleAttackPlayer}>
+                <div className="flex flex-col-reverse items-center justify-center w-40 bg-black/30 p-2 rounded-lg">
                     <img src="./assets/duelists/player_avatar_2.png" alt={duelState.opponent.name} className="w-24 h-24 rounded-full border-4 border-red-500"/>
                     <div className="text-center">
                         <h3 className="font-bold text-lg">{duelState.opponent.name}</h3>
@@ -125,19 +131,14 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
                 {isPlayerTurn && duelState.phase === 'main' &&
                     <button onClick={() => onEndTurn()} className="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Enter Combat</button>
                 }
-                {isPlayerTurn && duelState.phase === 'combat' &&
+                {isPlayerTurn && duelState.phase === 'combat' && selectingTarget === null &&
                     <button onClick={() => onEndTurn()} className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">End Turn</button>
+                }
+                 {isPlayerTurn && selectingTarget !== null &&
+                    <button onClick={handleCancelAttack} className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancel Attack</button>
                 }
                 <button onClick={onEndDuel} className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Concede</button>
             </div>
-            
-            {selectingTarget !== null && 
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30">
-                    <p className="text-2xl font-bold">Select a target</p>
-                    <button onClick={() => setSelectingTarget(null)} className="absolute top-10 right-10 text-white text-4xl">&times;</button>
-                    <button onClick={handleAttackPlayer} className="absolute bottom-20 bg-gray-700 p-2 rounded">Attack Player Directly</button>
-                </div>
-            }
 
             <div onMouseLeave={() => setHoveredCard(null)} className="absolute top-4 left-2 z-10">
                 <CardDetails card={hoveredCard} />
