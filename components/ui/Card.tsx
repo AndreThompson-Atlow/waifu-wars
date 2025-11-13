@@ -98,10 +98,16 @@ const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }>
                 )}
             </div>
 
-            {view === 'full' && (
+            {view === 'full' ? (
                 <div className="px-1 pb-1 flex-grow flex flex-col mt-1">
                     <div className="bg-slate-900/70 p-1.5 rounded-md flex-grow flex">
                         <p className="text-[10px] text-slate-200 leading-snug italic text-center m-auto">{card.description}</p>
+                    </div>
+                </div>
+            ) : (
+                <div className="px-1 pb-1 flex-grow flex flex-col mt-1">
+                    <div className="bg-slate-900/70 rounded-md flex-grow flex overflow-hidden">
+                        <p className="text-[7px] text-slate-400 leading-none italic text-center m-auto p-1">{card.description}</p>
                     </div>
                 </div>
             )}
@@ -163,7 +169,7 @@ const Card: React.FC<CardProps> = ({ card, onClick, className, view = 'full' }) 
 
     return (
         <div
-            className={`relative h-full w-full transform hover:scale-105 transition-transform duration-200 cursor-pointer ${className}`}
+            className={`relative h-full w-full transition-transform duration-200 cursor-pointer ${className}`}
             onClick={onClick}
             title={card.name}
         >

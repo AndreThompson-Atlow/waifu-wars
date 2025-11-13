@@ -10,7 +10,7 @@ interface CardDetailsProps {
 
 const CardDetails: React.FC<CardDetailsProps> = ({ card }) => {
     return (
-        <div className="w-80 aspect-[2/3]">
+        <div className="w-64 aspect-[2/3]">
             {card ? <Card card={card} view='full' /> : <CardBack />}
         </div>
     );
