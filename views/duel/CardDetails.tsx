@@ -2,16 +2,19 @@
 import React from 'react';
 import { CardData } from '../../types';
 import Card from '../../components/ui/Card';
-import CardBack from '../../components/ui/CardBack';
 
 interface CardDetailsProps {
     card: CardData | null;
 }
 
 const CardDetails: React.FC<CardDetailsProps> = ({ card }) => {
+    if (!card) {
+        return null;
+    }
+
     return (
-        <div className="w-64 aspect-[2/3]">
-            {card ? <Card card={card} view='full' /> : <CardBack />}
+        <div className="w-64 h-[448px]">
+            <Card card={card} view="full" />
         </div>
     );
 };
