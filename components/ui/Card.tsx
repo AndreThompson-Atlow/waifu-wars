@@ -48,7 +48,7 @@ const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | '
                 </div>
                 {card.traits && (
                     <div className="absolute bottom-1 w-full text-center px-1">
-                        <p className={`text-white font-semibold italic truncate ${isSimplified ? 'text-[9px]' : 'text-xs'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
+                        <p className={`text-white font-semibold italic truncate ${isSimplified ? (isHandCard ? 'text-[8px]' : 'text-sm') : 'text-lg'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
                             {card.traits.join(' - ')}
                         </p>
                     </div>
@@ -63,15 +63,15 @@ const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | '
                 </div>
             )}
 
-            <div className={`flex justify-between items-center mt-auto ${isSimplified ? 'p-0.5' : 'p-1'}`}>
-                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? 'h-7 px-1' : 'h-10 px-2'}`}>
-                    <p className={`font-black ${colors.name} ${isSimplified ? 'text-[10px]' : 'text-base'}`}>{`⚔️ ${card.critical ?? 1}`}</p>
+            <div className={`flex justify-between items-center mt-auto ${isSimplified ? (isHandCard ? 'p-1' : 'p-1.5') : 'p-1'}`}>
+                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? (isHandCard ? 'h-6 px-0.5' : 'h-7 px-1') : 'h-10 px-2'}`}>
+                    <p className={`font-black ${colors.name} ${isSimplified ? (isHandCard ? 'text-[10px]' : 'text-[12px]') : 'text-base'}`}>{isHandCard ? card.critical ?? 1 : `⚔️ ${card.critical ?? 1}`}</p>
                 </div>
-                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? 'h-9 px-1.5' : 'h-12 px-3'}`}>
-                    <p className={`font-black ${colors.name} ${isSimplified ? 'text-sm' : 'text-lg'}`}>{card.power}</p>
+                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? (isHandCard ? 'h-7 px-1' : 'h-9 px-1.5') : 'h-12 px-3'}`}>
+                <p className={`font-black ${colors.name} ${isSimplified ? (isHandCard ? 'text-sm' : 'text-md') : 'text-lg'}`}>{card.power}</p>
                 </div>
-                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? 'h-7 px-1' : 'h-10 px-2'}`}>
-                    <p className={`font-black ${colors.name} ${isSimplified ? 'text-[10px]' : 'text-base'}`}>{`🛡️ ${card.shield ?? 0}`}</p>
+                <div className={`rounded-lg ${colors.tag} flex items-center justify-center ${isSimplified ? (isHandCard ? 'h-6 px-0.5' : 'h-7 px-1') : 'h-10 px-2'}`}>
+                    <p className={`font-black ${colors.name} ${isSimplified ? (isHandCard ? 'text-[10px]' : 'text-[12px]') : 'text-base'}`}>{isHandCard ? card.shield ?? 0 : `🛡️ ${card.shield ?? 0}`}</p>
                 </div>
             </div>
         </CardLayout>
@@ -97,7 +97,7 @@ const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | 
                 </div>
                 {card.traits && (
                     <div className="absolute bottom-1 w-full text-center px-1">
-                        <p className={`text-white font-semibold italic truncate ${isSimplified ? 'text-[9px]' : 'text-xs'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
+                        <p className={`text-white font-semibold italic truncate ${isSimplified ? (isHandCard ? 'text-[8px]' : 'text-sm') : 'text-lg'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
                             {card.traits.join(' - ')}
                         </p>
                     </div>
@@ -140,7 +140,7 @@ const EquipmentCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified
                 </div>
                 {card.traits && (
                     <div className="absolute bottom-1 w-.full text-center px-1">
-                        <p className={`text-white font-semibold italic truncate ${isSimplified ? 'text-[9px]' : 'text-xs'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
+                        <p className={`text-white font-semibold italic truncate ${isSimplified ? (isHandCard ? 'text-[8px]' : 'text-sm') : 'text-lg'}`} style={{ textShadow: '0 0 3px #000, 0 0 3px #000' }}>
                             {card.traits.join(' - ')}
                         </p>
                     </div>
