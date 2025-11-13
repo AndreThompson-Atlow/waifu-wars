@@ -8,8 +8,9 @@ export type CardType = 'unit' | 'spell' | 'equipment';
 export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Legendary' | 'Mythic';
 export type MoralAlignment = 'Good' | 'Neutral' | 'Evil';
 export type PhilosophicalAlignment = 'Law' | 'Neutral' | 'Chaos';
-export type Element = 'Infernal' | 'Voltaic' | 'Aqua' | 'Frost' | 'Gale' | 'Terra' | 'Umbral' | 'Radiant';
+export type Element = 'Metallic' | 'Infernal' | 'Voltaic' | 'Aqua' | 'Frost' | 'Gale' | 'Terra' | 'Umbral' | 'Radiant';
 export type EquipmentType = 'Weapon' | 'Armor' | 'Accessory';
+export type TurnPhase = 'dawn' | 'summon' | 'pre-combat' | 'combat' | 'dusk';
 
 export interface District {
     id: DistrictId;
@@ -121,7 +122,7 @@ export interface DuelState {
     player: DuelPlayerState;
     opponent: DuelPlayerState;
     turn: number;
-    phase: 'draw' | 'main' | 'combat' | 'end';
+    phase: TurnPhase;
     activePlayerId: string;
 }
 

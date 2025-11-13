@@ -6,7 +6,7 @@ interface CardProps {
     card: CardData | null;
     onClick?: () => void;
     className?: string;
-    view?: 'full' | 'simplified';
+    view?: 'full' | 'simplified' | 'hand';
 }
 
 const RARITY_COLORS: Record<Rarity, { border: string; shadow: string; text: string; name: string; tag: string }> = {
@@ -29,15 +29,16 @@ const CardLayout: React.FC<{ card: CardData, children: React.ReactNode }> = ({ c
     );
 };
 
-const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> = ({ card, view }) => {
+const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | 'hand' }> = ({ card, view }) => {
     const colors = RARITY_COLORS[card.rarity];
-    const isSimplified = view === 'simplified';
+    const isSimplified = view === 'simplified' || view === 'hand';
+    const isHandCard = view ==='hand';
 
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
                 <div className="truncate">
-                    <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                    <h3 className={`font-bold ${isHandCard ? 'text-xs' : 'text-sm'} ${colors.name} uppercase truncate`}>{card.name}</h3>
                 </div>
             </div>
 
@@ -77,15 +78,16 @@ const UnitCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> 
     );
 }
 
-const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> = ({ card, view }) => {
+const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | 'hand' }> = ({ card, view }) => {
     const colors = RARITY_COLORS[card.rarity];
-    const isSimplified = view === 'simplified';
+    const isSimplified = view === 'simplified' || view === 'hand';
+    const isHandCard = view ==='hand';
 
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
                 <div className="truncate">
-                    <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                    <h3 className={`font-bold ${isHandCard ? 'text-xs' : 'text-sm'} ${colors.name} uppercase truncate`}>{card.name}</h3>
                 </div>
             </div>
 
@@ -120,15 +122,16 @@ const SpellCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }>
     );
 }
 
-const EquipmentCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' }> = ({ card, view }) => {
+const EquipmentCardLayout: React.FC<{ card: CardData, view: 'full' | 'simplified' | 'hand' }> = ({ card, view }) => {
     const colors = RARITY_COLORS[card.rarity];
-    const isSimplified = view === 'simplified';
+    const isSimplified = view === 'simplified' || view === 'hand';
+    const isHandCard = view ==='hand';
 
     return (
         <CardLayout card={card}>
             <div className={`p-1 ${colors.tag} text-white text-center`}>
                 <div className="truncate">
-                    <h3 className={`font-bold text-sm ${colors.name} uppercase truncate`}>{card.name}</h3>
+                    <h3 className={`font-bold ${isHandCard ? 'text-xs' : 'text-sm'} ${colors.name} uppercase truncate`}>{card.name}</h3>
                 </div>
             </div>
             <div className="relative bg-black/30">

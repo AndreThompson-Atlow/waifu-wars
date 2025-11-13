@@ -82,19 +82,19 @@ const App: React.FC = () => {
     const handlePlayCard = (cardId: string, slotIndex: number) => {
         if (!gameState.activeDuel) return;
         const newDuelState = gameManager.playCard(gameState.activeDuel, gameState.player.id, cardId, slotIndex);
-        setGameState(prev => ({ ...prev, activeDuel: { ...newDuelState } }));
+        setGameState(prev => ({ ...prev, activeDuel: newDuelState }));
     };
 
-    const handleEndTurn = () => {
+    const handleAdvancePhase = () => {
         if (!gameState.activeDuel) return;
-        const newDuelState = gameManager.endTurn(gameState.activeDuel);
-        setGameState(prev => ({ ...prev, activeDuel: { ...newDuelState } }));
+        const newDuelState = gameManager.advancePhase(gameState.activeDuel);
+        setGameState(prev => ({ ...prev, activeDuel: newDuelState }));
     };
 
     const handleUnitAttack = (attackerIndex: number, targetIndex: number | null) => {
         if (!gameState.activeDuel) return;
         const newDuelState = gameManager.attack(gameState.activeDuel, gameState.player.id, attackerIndex, targetIndex);
-        setGameState(prev => ({ ...prev, activeDuel: { ...newDuelState } }));
+        setGameState(prev => ({ ...prev, activeDuel: newDuelState }));
     };
 
     const startDeckEdit = (deckId: number | null) => {
@@ -145,7 +145,7 @@ const App: React.FC = () => {
                             duelState={gameState.activeDuel} 
                             onEndDuel={endDuel} 
                             onPlayCard={handlePlayCard} 
-                            onEndTurn={handleEndTurn}
+                            onAdvancePhase={handleAdvancePhase}
                             onUnitAttack={handleUnitAttack}
                         />;
             case 'shop':

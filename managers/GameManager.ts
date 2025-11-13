@@ -1,5 +1,5 @@
 
-import { DuelState, PlayerState, UnitInstance } from '../types';
+import { DuelState, PlayerState, UnitInstance, TurnPhase, CardData, DuelPlayerState } from '../types';
 import { NPCS, TEST_CARDS } from '../constants/index';
 import { aiManager } from './AIManager';
 
@@ -18,13 +18,13 @@ class GameManager {
         const playerDeck = this.shuffle(playerState.decks[0].cards);
         const opponentDeck = this.shuffle(opponentNPC.deck);
 
-        return {
+        let initialState: DuelState = {
             player: {
                 id: playerState.id,
                 name: playerState.name,
                 avatarUrl: playerState.avatarUrl,
                 hp: 10,
-                hand: playerDeck.splice(0, 3),
+                hand: [],
                 board: { deck: playerDeck, discard: [], extraDeck: [], banished: [], units: [null, null, null] },
                 hasSummonedUnitThisTurn: false,
             },
@@ -33,22 +33,37 @@ class GameManager {
                 name: opponentNPC.name,
                 avatarUrl: opponentNPC.avatarUrl,
                 hp: 10,
-                hand: opponentDeck.splice(0, 3),
+                hand: [],
                 board: { deck: opponentDeck, discard: [], extraDeck: [], banished: [], units: [null, null, null] },
                 hasSummonedUnitThisTurn: false,
             },
             turn: 1,
-            phase: 'main',
+            phase: 'dawn',
             activePlayerId: playerState.id,
         };
+
+        for (let i = 0; i < 3; i++) {
+            initialState = this.drawCard(initialState, playerState.id);
+            initialState = this.drawCard(initialState, opponentId);
+        }
+
+        return this.dawn(initialState);
     }
 
-    private getPlayer(duelState: DuelState, playerId: string) {
+    private getPlayer(duelState: DuelState, playerId: string): DuelPlayerState {
         return duelState.player.id === playerId ? duelState.player : duelState.opponent;
     }
-    
-    getCardData(cardId: string) {
+
+    getCardData(cardId: string): CardData | null {
         return TEST_CARDS[cardId] || null;
+    }
+
+    private updatePlayerState(duelState: DuelState, playerId: string, newPlayerState: DuelPlayerState): DuelState {
+        if (duelState.player.id === playerId) {
+            return { ...duelState, player: newPlayerState };
+        } else {
+            return { ...duelState, opponent: newPlayerState };
+        }
     }
 
     drawCard(duelState: DuelState, playerId: string): DuelState {
@@ -56,33 +71,48 @@ class GameManager {
         if (player.hand.length >= 4 || player.board.deck.length === 0) {
             return duelState;
         }
+
         const newDeck = [...player.board.deck];
         const drawnCard = newDeck.shift()!;
-        player.hand.push(drawnCard);
-        player.board.deck = newDeck;
-        return duelState;
+        const newHand = [...player.hand, drawnCard];
+        const newBoard = { ...player.board, deck: newDeck };
+        const newPlayer = { ...player, hand: newHand, board: newBoard };
+
+        return this.updatePlayerState(duelState, playerId, newPlayer);
     }
 
     playCard(duelState: DuelState, playerId: string, cardId: string, slotIndex: number): DuelState {
         const player = this.getPlayer(duelState, playerId);
         const cardData = this.getCardData(cardId);
-
-        if (player.hasSummonedUnitThisTurn || !cardData || duelState.phase !== 'main') return duelState;
+        if (!cardData) return duelState;
 
         const cardInHandIndex = player.hand.indexOf(cardId);
         if (cardInHandIndex === -1 || player.board.units[slotIndex] !== null) return duelState;
 
+        let newPlayerState: DuelPlayerState;
+
         if (cardData.type === 'unit') {
-            player.hand.splice(cardInHandIndex, 1);
-            const newUnit: UnitInstance = {
-                cardId: cardId,
-                currentShield: cardData.shield!,
-                canAttack: false, // Summoning sickness
-            };
-            player.board.units[slotIndex] = newUnit;
-            player.hasSummonedUnitThisTurn = true;
+            if (duelState.phase !== 'summon' || player.hasSummonedUnitThisTurn) return duelState;
+            
+            const newHand = player.hand.filter((c, i) => i !== cardInHandIndex);
+            const newUnits = [...player.board.units];
+            newUnits[slotIndex] = { cardId, currentShield: cardData.shield!, canAttack: false };
+            const newBoard = { ...player.board, units: newUnits };
+            newPlayerState = { ...player, hand: newHand, board: newBoard, hasSummonedUnitThisTurn: true };
+
+        } else if (cardData.type === 'spell' || cardData.type === 'equipment') {
+            if (duelState.phase !== 'pre-combat') return duelState;
+
+            const newHand = player.hand.filter((c, i) => i !== cardInHandIndex);
+            const newDiscard = [...player.board.discard, cardId];
+            const newBoard = { ...player.board, discard: newDiscard };
+            newPlayerState = { ...player, hand: newHand, board: newBoard };
+
+        } else {
+            return duelState;
         }
-        return duelState;
+        
+        return this.updatePlayerState(duelState, playerId, newPlayerState);
     }
 
     attack(duelState: DuelState, attackerId: string, attackerSlotIndex: number, targetSlotIndex: number | null): DuelState {
@@ -94,85 +124,113 @@ class GameManager {
 
         if (!attackerUnit || !attackerUnit.canAttack) return duelState;
 
+        let newAttackerPlayerState = { ...attackerPlayer };
+        let newOpponentPlayerState = { ...opponentPlayer };
+        let newAttackerUnit = { ...attackerUnit, canAttack: false };
+
         if (targetSlotIndex === null) {
             if (opponentPlayer.board.units.some(u => u !== null)) return duelState;
             const attackerCardData = this.getCardData(attackerUnit.cardId)!;
-            opponentPlayer.hp -= attackerCardData.critical!;
-            attackerUnit.canAttack = false;
+            newOpponentPlayerState = { ...newOpponentPlayerState, hp: newOpponentPlayerState.hp - attackerCardData.critical! };
         } else {
             const targetUnit = opponentPlayer.board.units[targetSlotIndex];
             if (!targetUnit) return duelState;
 
             const attackerCardData = this.getCardData(attackerUnit.cardId)!;
             const targetCardData = this.getCardData(targetUnit.cardId)!;
+            let newTargetUnit = { ...targetUnit };
 
             if (attackerCardData.power! > targetCardData.power!) {
-                targetUnit.currentShield -= attackerCardData.critical!;
+                newTargetUnit.currentShield -= attackerCardData.critical!;
             } else if (targetCardData.power! > attackerCardData.power!) {
-                attackerUnit.currentShield -= targetCardData.critical!;
+                newAttackerUnit.currentShield -= targetCardData.critical!;
             } else {
-                targetUnit.currentShield -= attackerCardData.critical!;
-                attackerUnit.currentShield -= targetCardData.critical!;
+                newTargetUnit.currentShield -= attackerCardData.critical!;
+                newAttackerUnit.currentShield -= targetCardData.critical!;
             }
             
-            if (attackerUnit.currentShield <= 0) {
-                attackerPlayer.board.discard.push(attackerUnit.cardId);
-                attackerPlayer.board.units[attackerSlotIndex] = null;
+            const newOpponentUnits = [...newOpponentPlayerState.board.units];
+            const newOpponentDiscard = [...newOpponentPlayerState.board.discard];
+            if (newTargetUnit.currentShield <= 0) {
+                newOpponentDiscard.push(newTargetUnit.cardId);
+                newOpponentUnits[targetSlotIndex] = null;
             }
-            if (targetUnit.currentShield <= 0) {
-                opponentPlayer.board.discard.push(targetUnit.cardId);
-                opponentPlayer.board.units[targetSlotIndex] = null;
-            }
-            attackerUnit.canAttack = false;
+            newOpponentPlayerState = { ...newOpponentPlayerState, board: { ...newOpponentPlayerState.board, units: newOpponentUnits, discard: newOpponentDiscard } };
         }
 
-        return duelState;
+        const newAttackerUnits = [...newAttackerPlayerState.board.units];
+        const newAttackerDiscard = [...newAttackerPlayerState.board.discard];
+        if (newAttackerUnit.currentShield <= 0) {
+            newAttackerDiscard.push(newAttackerUnit.cardId);
+            newAttackerUnits[attackerSlotIndex] = null;
+        } else {
+            newAttackerUnits[attackerSlotIndex] = newAttackerUnit;
+        }
+        newAttackerPlayerState = { ...newAttackerPlayerState, board: { ...newAttackerPlayerState.board, units: newAttackerUnits, discard: newAttackerDiscard } };
+
+        const newDuelState = this.updatePlayerState(duelState, attackerId, newAttackerPlayerState);
+        return this.updatePlayerState(newDuelState, opponentPlayer.id, newOpponentPlayerState);
     }
 
-    endTurn(duelState: DuelState): DuelState {
-        if (duelState.activePlayerId === duelState.player.id) {
-            if (duelState.phase === 'main') {
-                return this.changePhase(duelState, 'combat');
-            } else if (duelState.phase === 'combat') {
-                return this.changePhase(duelState, 'end');
-            }
-        }
-        return this.executeEndTurn(duelState);
-    }
+    advancePhase(duelState: DuelState): DuelState {
+        const activePlayerId = duelState.activePlayerId;
+        let newPhase: TurnPhase;
 
-    changePhase(duelState: DuelState, phase: 'main' | 'combat' | 'end'): DuelState {
-        duelState.phase = phase;
-        if (phase === 'end') {
-            return this.executeEndTurn(duelState);
+        switch (duelState.phase) {
+            case 'dawn':
+                newPhase = 'summon';
+                break;
+            case 'summon':
+                newPhase = 'pre-combat';
+                break;
+            case 'pre-combat':
+                newPhase = 'combat';
+                break;
+            case 'combat':
+                newPhase = 'dusk';
+                return this.dusk({ ...duelState, phase: newPhase });
+            default:
+                return duelState;
         }
-        return duelState;
+
+        const newState = { ...duelState, phase: newPhase };
+
+        if (activePlayerId === newState.opponent.id) {
+            return aiManager.takeTurn(newState);
+        }
+
+        return newState;
     }
     
-    private executeEndTurn(duelState: DuelState): DuelState {
+    private dawn(duelState: DuelState): DuelState {
+        const newState = this.drawCard(duelState, duelState.activePlayerId);
+        return this.advancePhase(newState);
+    }
+    
+    private dusk(duelState: DuelState): DuelState {
+        return this.endTurn(duelState);
+    }
+    
+    public endTurn(duelState: DuelState): DuelState {
         const currentPlayer = this.getPlayer(duelState, duelState.activePlayerId);
-        currentPlayer.hasSummonedUnitThisTurn = false;
+        const newCurrentPlayerState = { ...currentPlayer, hasSummonedUnitThisTurn: false };
+        let newDuelState = this.updatePlayerState(duelState, duelState.activePlayerId, newCurrentPlayerState);
 
-        const nextPlayerId = duelState.activePlayerId === duelState.player.id ? duelState.opponent.id : duelState.player.id;
-        duelState.activePlayerId = nextPlayerId;
+        const nextPlayerId = newDuelState.activePlayerId === newDuelState.player.id ? newDuelState.opponent.id : newDuelState.player.id;
+        const nextPlayer = this.getPlayer(newDuelState, nextPlayerId);
         
-        if (nextPlayerId === duelState.player.id) {
-            duelState.turn++;
-        }
-
-        const nextPlayer = this.getPlayer(duelState, nextPlayerId);
-        nextPlayer.board.units.forEach(unit => {
-            if (unit) unit.canAttack = true;
-        });
-
-        this.drawCard(duelState, nextPlayerId);
+        const newUnits = nextPlayer.board.units.map(unit => unit ? { ...unit, canAttack: true } : null);
+        const newNextPlayerBoard = { ...nextPlayer.board, units: newUnits };
+        const newNextPlayerState = { ...nextPlayer, board: newNextPlayerBoard };
+        newDuelState = this.updatePlayerState(newDuelState, nextPlayerId, newNextPlayerState);
         
-        duelState.phase = 'main';
-
-        if (nextPlayerId === duelState.opponent.id) {
-            return aiManager.takeTurn(duelState);
+        newDuelState.activePlayerId = nextPlayerId;
+        if (nextPlayerId === newDuelState.player.id) {
+            newDuelState.turn++;
         }
-
-        return duelState;
+        newDuelState.phase = 'dawn';
+        
+        return this.dawn(newDuelState);
     }
 }
 

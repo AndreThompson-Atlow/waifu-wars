@@ -22,7 +22,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ cards, isOpponent = false, onCa
                     onMouseLeave={() => onCardHover(null)}
                     onClick={() => onCardClick && card && onCardClick(card)}
                 >
-                    {isOpponent ? <CardBack /> : (card ? <Card card={card} view='simplified' /> : <div/>)}
+                    {isOpponent ? <CardBack /> : (card ? <Card card={card} view='hand' /> : <div/>)}
                 </div>
             ))}
         </div>

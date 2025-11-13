@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { CardData, DuelState } from '../types';
+import { CardData, DuelState, TurnPhase } from '../types';
 import { TEST_CARDS } from '../constants';
 import PlayerHand from './duel/PlayerHand';
 import Board from './duel/Board';
@@ -10,11 +10,11 @@ interface DuelViewProps {
     duelState: DuelState;
     onEndDuel: () => void;
     onPlayCard: (cardId: string, slotIndex: number) => void;
-    onEndTurn: () => void;
+    onAdvancePhase: () => void;
     onUnitAttack: (attackerIndex: number, targetIndex: number | null) => void;
 }
 
-const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, onEndTurn, onUnitAttack }) => {
+const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, onAdvancePhase, onUnitAttack }) => {
     const [hoveredCard, setHoveredCard] = useState<CardData | null>(null);
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
     const [selectingTarget, setSelectingTarget] = useState<number | null>(null); // Attacker's index
@@ -37,7 +37,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
         discard: player.board.discard.map(getCardData) as CardData[],
         extraDeck: player.board.extraDeck.map(getCardData) as CardData[],
         banished: player.board.banished.map(getCardData) as CardData[],
-        units: playerBoardUnits as any,
+        units: playerBoardUnits as any, 
     };
 
     const opponentBoard = {
@@ -48,10 +48,8 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
         units: opponentBoardUnits as any,
     };
 
-    // --- Event Handlers ---
-
     const handleCardClickInHand = (card: CardData) => {
-        if (!isPlayerTurn || duelState.phase !== 'main' || player.hasSummonedUnitThisTurn) return;
+        if (!isPlayerTurn || duelState.phase !== 'summon' || player.hasSummonedUnitThisTurn) return;
         setSelectedCardId(card.id);
     };
 
@@ -70,7 +68,7 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
             if (opponentHasUnits) {
                 setSelectingTarget(unitIndex);
             } else {
-                onUnitAttack(unitIndex, null); // No units to target, attack player directly
+                onUnitAttack(unitIndex, null);
             }
         }
     };
@@ -87,6 +85,15 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
 
     const opponentUnitIndices = opponentBoardUnits.map((unit, index) => unit ? index : -1).filter(index => index !== -1);
     const highlightedIndices = selectingTarget !== null ? opponentUnitIndices : [];
+    
+    const getPhaseButtonText = (phase: TurnPhase) => {
+        switch (phase) {
+            case 'summon': return 'Enter Pre-Combat';
+            case 'pre-combat': return 'Enter Combat';
+            case 'combat': return 'End Turn';
+            default: return '';
+        }
+    }
 
     return (
         <div className="h-full w-full relative bg-cover bg-center" style={{ backgroundImage: "url('./assets/ui/tabletop.png')" }}>
@@ -128,11 +135,15 @@ const DuelView: React.FC<DuelViewProps> = ({ duelState, onEndDuel, onPlayCard, o
             </div>
             
             <div className="absolute bottom-4 right-4 flex flex-col items-end gap-2 z-20">
-                {isPlayerTurn && duelState.phase === 'main' &&
-                    <button onClick={() => onEndTurn()} className="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Enter Combat</button>
-                }
-                {isPlayerTurn && duelState.phase === 'combat' && selectingTarget === null &&
-                    <button onClick={() => onEndTurn()} className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">End Turn</button>
+                <div className="bg-black/50 p-2 rounded-lg text-white text-center">
+                    <p className="font-bold">Turn {duelState.turn}</p>
+                    <p>{isPlayerTurn ? 'Your Turn' : "Opponent's Turn"}</p>
+                    <p className="uppercase font-bold text-yellow-300">{duelState.phase} Phase</p>
+                </div>
+                {isPlayerTurn && selectingTarget === null && ['summon', 'pre-combat', 'combat'].includes(duelState.phase) &&
+                    <button onClick={onAdvancePhase} className="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">
+                        {getPhaseButtonText(duelState.phase)}
+                    </button>
                 }
                  {isPlayerTurn && selectingTarget !== null &&
                     <button onClick={handleCancelAttack} className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancel Attack</button>
