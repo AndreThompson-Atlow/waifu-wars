@@ -1,10 +1,11 @@
+
 import { CardData } from '../types';
 
 export const TEST_CARDS: Record<string, CardData> = {
     'card_1': {
         id: 'card_1',
         name: 'Infernal Imp',
-        imageUrl: './assets/cards/1.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'A mischievous creature from the infernal planes.',
         type: 'unit',
         rarity: 'Common',
@@ -18,7 +19,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_2': {
         id: 'card_2',
         name: 'Voltaic Knight',
-        imageUrl: './assets/cards/2.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'A knight who channels the power of lightning.',
         type: 'unit',
         rarity: 'Common',
@@ -32,7 +33,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_3': {
         id: 'card_3',
         name: 'Aqua Serpent',
-        imageUrl: './assets/cards/3.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'A serpent that commands the power of water.',
         type: 'unit',
         rarity: 'Uncommon',
@@ -46,7 +47,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_4': {
         id: 'card_4',
         name: 'Frost Giant',
-        imageUrl: './assets/cards/4.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'A giant from the frozen wastelands.',
         type: 'unit',
         rarity: 'Rare',
@@ -60,7 +61,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_5': {
         id: 'card_5',
         name: 'Gale Griffin',
-        imageUrl: './assets/cards/5.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'A majestic griffin that soars on the winds.',
         type: 'unit',
         rarity: 'Uncommon',
@@ -74,7 +75,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_6': {
         id: 'card_6',
         name: 'Terra Titan',
-        imageUrl: './assets/cards/6.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'A titan made of rock and earth.',
         type: 'unit',
         rarity: 'Rare',
@@ -88,7 +89,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_7': {
         id: 'card_7',
         name: 'Umbral Assassin',
-        imageUrl: './assets/cards/7.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'An assassin who strikes from the shadows.',
         type: 'unit',
         rarity: 'Rare',
@@ -102,7 +103,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_8': {
         id: 'card_8',
         name: 'Radiant Paladin',
-        imageUrl: './assets/cards/8.png',
+        imageUrl: './assets/cards/adventurer.png',
         description: 'A paladin who wields the power of light.',
         type: 'unit',
         rarity: 'Legendary',
@@ -116,7 +117,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_9': {
         id: 'card_9',
         name: 'Fireball',
-        imageUrl: './assets/cards/9.png',
+        imageUrl: './assets/cards/fireball.png',
         description: 'A classic fireball spell.',
         type: 'spell',
         rarity: 'Common',
@@ -124,7 +125,7 @@ export const TEST_CARDS: Record<string, CardData> = {
     'card_10': {
         id: 'card_10',
         name: 'Sword of Slaying',
-        imageUrl: './assets/cards/10.png',
+        imageUrl: './assets/cards/light_armor.png',
         description: 'A powerful sword that can slay even the mightiest of foes.',
         type: 'equipment',
         rarity: 'Legendary',
